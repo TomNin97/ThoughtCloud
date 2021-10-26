@@ -1,0 +1,8 @@
+https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/routes
+https://www.bezkoder.com/node-js-rest-api-express-mysql/
+https://www.bezkoder.com/react-node-express-mysql/#Add_Navbar_to_React_CRUD_App
+https://medium.com/@avanthikameenakshi/building-restful-api-with-nodejs-and-mysql-in-10-min-ff740043d4be
+
+https://expressjs.com/en/api.html
+
+https://www.npmjs.com/package/mysql#escaping-query-values
