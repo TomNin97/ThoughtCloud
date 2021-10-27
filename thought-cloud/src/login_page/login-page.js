@@ -23,11 +23,11 @@ export class LoginPage extends React.Component {
 
     //updates state email and password value
     handlePasswordChange = (newPassword) => {
-        this.setState({["password"] : newPassword.target.value});
+        this.setState({"password" : newPassword.target.value});
     }
 
     handleEmailChange = (newEmail)=> {
-        this.setState({["email"] :newEmail.target.value})
+        this.setState({"email" :newEmail.target.value})
     }
 
     render() {
