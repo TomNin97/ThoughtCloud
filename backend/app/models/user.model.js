@@ -128,7 +128,7 @@ User.removeAll = (result) => {
       return;
     }
 
-    console.log("deleted ${res.affectedRwos} users");
+    console.log("deleted " + `${res.affectedRows}` + " users");
     result(null, res);
   });
 };
@@ -156,28 +156,33 @@ User.removeByPK = (deljson, result) => {
   );
 };
 
-/* update user info */
-User.updateInfo = (newValue, tableKey, userID, result) => {
-  var query = "UPDATE users SET " + tableKey + " = '" + newValue + "' WHERE ID = " + userID;
-  sql.query(
-    query,
-    (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(null, err);
-        return;
-      }
+User.updateInfo = (assignmentStrings, userID, result) => {
+  /* base SQL query to update users table */
+  var query = "UPDATE users SET ";
 
-      if (res.affectedRows == 0) {
-        // not found Customer with the id
-        result({ kind: "not_found" }, null);
-        return;
-      }
-      
-      console.log("updated " + tableKey + "of ID " + userID);
-      result(null)
+  /* Add assignment statements to base SQL query */
+  for (var i = 0; i < assignmentStrings.length; i++) {
+    query += assignmentStrings[i];
+    /* Add a comma after every attribute update except for the last */
+    if (assignmentStrings.length == 0 || i == assignmentStrings.length - 1) {
+      /* add WHERE clause at end of query and return */
+      query += " WHERE ID = " + userID;
+      break;
+    } else query += ", ";
+  }
+
+  //console.log(query);
+
+  /* Execute update query */
+  sql.query(query, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(null, err);
+      return;
     }
-  );
-};
 
+    console.log("updated " + userID);
+    result(null, assignmentStrings);
+  });
+};
 module.exports = User;
