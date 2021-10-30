@@ -7,7 +7,7 @@ import { MainClassPage } from './main_class_page/main_class_page';
 function App() {
   return (
     <div className="App">
-    <MainClassPage/>
+   <LoginPage/>
     </div>
   );
 }

@@ -1,8 +1,8 @@
 module.exports = {
-    HOST: "192.168.1.151",
+    HOST: "UmuHawas-MacBook-Air.local",
     PORT: "3306",
     USER: "root",
-    PASSWORD: "thoughtcloud2021",
-    DB: "thoughtcloud"
+    PASSWORD: "moneyMaker1",
+    DB: "thoughtCloud"
   };
   
