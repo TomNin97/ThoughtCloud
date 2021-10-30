@@ -22,6 +22,8 @@ app.get("/", (req, res) => {
 
 /* require all route files */
 require("./app/routes/user.routes.js")(app);
+require("./app/routes/course.routes.js")(app);
+
 
 /* open port 5000 */
 app.listen(5000, ()=> {

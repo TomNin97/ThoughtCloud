@@ -13,13 +13,33 @@
 const { json } = require("body-parser");
 const User = require("../models/user.model.js");
 
+/* Function to check request validity 
+   Disect HTTP request and flag as invalid if any 
+   key is not in a predefined list of valid keys
+*/
+
+const VALID_KEYS = ["ID", "firstName", "lastName", "email", "password", "type"];
+function requestCheck(req) {
+  for (const prop in req) {
+    console.log(`${prop}`);
+    if (!VALID_KEYS.includes(`${prop}`)) {
+      console.log(`${prop}` + "in request is not a valid key");
+      return false;
+    }
+  }
+  return true;
+}
+
+/* error handler to determine which parameter is the issue? */
+
 /* Create a new user */
 exports.create = (req, res) => {
   /* validate the request */
-  if (!req.body) {
+  if (requestCheck(req.body) == false) {
     res.status(400).send({
-      message: "Content can not be empty!",
+      message: "Invalid HTTP Request",
     });
+    return;
   }
 
   /* Create new user if valid request */
@@ -68,10 +88,11 @@ exports.removeAll = (req, res) => {
 /* remove users by PK */
 exports.removeByPK = (req, res) => {
   /* validate the request */
-  if (!req.body) {
+  if (requestCheck(req.body) == false) {
     res.status(400).send({
-      message: "Content can not be empty!",
+      message: "Invalid HTTP Request",
     });
+    return;
   }
 
   /* object to pasS information about user to be deleted easily */
@@ -109,11 +130,13 @@ exports.removeByPK = (req, res) => {
 /* find user by primary key */
 exports.findUser = (req, res) => {
   /* validate the request */
-  if (!req.body) {
+  if (requestCheck(req.body) == false) {
     res.status(400).send({
-      message: "Content can not be empty!",
+      message: "Invalid HTTP Request",
     });
+    return;
   }
+
   /* object to pass user information easily */
   const userInfo = {
     ID: req.body.ID, // ID from URL
@@ -178,50 +201,57 @@ exports.findUser = (req, res) => {
 
 /* update user info */
 exports.updateUserInfo = (req, res) => {
-    /* validate the request */
-    if (!req.body) {
-      res.status(400).send({
-        message: "Content can not be empty!",
-      });
-    }
+  /* validate the request */
+  if (requestCheck(req.body) == false) {
+    res.status(400).send({
+      message: "Invalid HTTP Request",
+    });
+    return;
+  }
 
-    const newInfo = {
-      ID : req.params.ID,
-      firstName : req.body.firstName,
-      lastName : req.body.lastName,
-      email : req.body.email,
-      password : req.body.password,
-      type : req.body.type,
-    };
+  const newInfo = {
+    ID: req.params.ID,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    email: req.body.email,
+    password: req.body.password,
+    type: req.body.type,
+  };
 
-    /* ID is the ONLY constant 
+  /* ID is the ONLY constant 
        Force ununsed changes to be null in the HTTP request
        Preserve current values if HTTP request new value is null
     */
-    var i = 0;
-    const sentValueData = [];
-    const sentValueKey = [];
-    /* get values that are passed in the HTTP request */
-    for(const prop in newInfo) {
-        //console.log(`${newInfo[prop]}` == 'null');
-        if(`${newInfo[prop]}` != 'null' && `${prop}` != 'ID'){
-            sentValueData[i] = `${newInfo[prop]}`;
-            sentValueKey[i] = `${prop}`;
-            i++;
-        }
-    }
-    console.log(sentValueData);
-    console.log(sentValueKey);
 
-   
-    for(var i = 0; i < sentValueData.length; i++){
-            User.updateInfo(sentValueData[i], sentValueKey[i], req.params.ID, (err, data) =>{
-                if(err){
-                    res.status(500).send({
-                        message: "error"
-                    });
-                } else res.send(data);
-            })
-        
+  /* get non-null values that are passed in the HTTP request */
+  var assignmentStrings = [];
+  var i = 0;
+
+  for (const prop in newInfo) {
+    if (
+      `${newInfo[prop]}` != "null" &&
+      `${newInfo[prop]}` != "undefined" &&
+      `${prop}` != "ID"
+    ) {
+      /* store updates in an array of strings to attach to SQL query */
+      assignmentStrings[i] = `${prop}` + " = " + "'" + `${newInfo[prop]}` + "'";
+      i++;
     }
-  };
+  }
+
+  /* if no updates, stop */
+  if (assignmentStrings.length == 0) {
+    res.status(500).send({
+      message: "All updates have null values",
+    });
+    return;
+  }
+
+  User.updateInfo(assignmentStrings, req.params.ID, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: "error",
+      });
+    } else res.send(data);
+  });
+};
