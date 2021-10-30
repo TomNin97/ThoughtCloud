@@ -1,23 +1,13 @@
-import logo from './logo.svg';
+
 import './App.css';
+import { LoginPage } from './login_page/login-page.js';
+import {DashBoard} from "./account_page/account_page.js"
+import { MainClassPage } from './main_class_page/main_class_page';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <MainClassPage/>
     </div>
   );
 }
