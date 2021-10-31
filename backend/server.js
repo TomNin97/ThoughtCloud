@@ -6,6 +6,8 @@
 /* required packages */
 const bodyParser = require("body-parser");
 const express = require("express");
+const cors = require("cors");
+
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(bodyParser.json());
 
 /* ??? */
 app.use(bodyParser.urlencoded( { extended: true }));
+
+app.use(cors());
 
 /* home route */
 app.get("/", (req, res) => {
