@@ -15,17 +15,11 @@ the above features. To create an API call that will perform a query on the users
 /* need to be connected to the DB */
 const courseRoutes = require("../routes/course.routes.js");
 const sql = require("./db.js");
-
-function formQuery(courseMod){
-  var query = "CREATE TABLE" + req.courseDepartment + req.courseID + req.courseSection + courseMod;
-  const classlistSchema = "ID INT NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL UNIQUE, lastName VARCHAR(45) NOT NULL UNIQUE, PRIMARY KEY(idNumber, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName)";
-  const calendarSchema = "" ;
-  const notesSchema = "" ;
-}
+const async = require("async");
 
 /* Course constructor */
 const Course = function (course) {
-  this.courseDepartment = course.courseDepartment
+  this.departmentID = course.departmentID;
   this.courseID = course.courseID;
   this.courseSection = course.courseSection;
   this.courseName = course.courseName;
@@ -33,31 +27,140 @@ const Course = function (course) {
   this.assistantID = course.assistantID;
 };
 
-/* Create a new course */
-Course.create = (newCourse, result) => {
-  sql.query("INSERT INTO courses SET ?", newCourse, (err, res) => {
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
-    }
-    console.log("created course: ", { ...newCourse });
-    result(null, { ...newCourse });
-  });
+const TABLE_MODIFIER = ["classlist", "calendar", "notes"];
+/* function to form SQL queries */
+function formQuery(courseInfo) {
+  var q1 = "INSERT INTO courses SET ?";
+  var q2 =
+    "CREATE TABLE " +
+    courseInfo.departmentID +
+    courseInfo.courseID +
+    courseInfo.courseSection +
+    TABLE_MODIFIER[0] +
+    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL UNIQUE, lastName VARCHAR(45) NOT NULL UNIQUE, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE)";
+  var q3 =
+    "CREATE TABLE " +
+    courseInfo.departmentID +
+    courseInfo.courseID +
+    courseInfo.courseSection +
+    TABLE_MODIFIER[1] +
+    " (posterID VARCHAR(8) NOT NULL, eventID INT NOT NULL UNIQUE AUTO_INCREMENT, eventDate DATE NOT NULL, startTime TIME NOT NULL, endTime TIME NOT NULL, eventTitle VARCHAR(60) NOT NULL, description VARCHAR(200), PRIMARY KEY(posterID, eventID))";
+  var q4 =
+    "CREATE TABLE " +
+    courseInfo.departmentID +
+    courseInfo.courseID +
+    courseInfo.courseSection +
+    TABLE_MODIFIER[2] +
+    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID))";
+
+  /* object to store formed queries */
+  var queries = {
+    q_insertCourse: q1,
+    q_createClasslist: q2,
+    q_createCalendar: q3,
+    q_createNotes: q4,
+  };
+
+  return queries;
 }
 
-/* Create course tables */
-Course.createTable = (newCourse, courseMod, result) => {
-  sql.query(formQuery(courseMod), newCourse, (err, res) => {
+/* Create a new course */
+Course.create = (newCourse, result) => {
+  var sqlQueries = formQuery(newCourse);
+
+  /* To make sure that bad course inerstions do not generate the associated tables, the SQL queries are implemented as a transaction.
+     This means that if one fails, they all fail. This ensures that valid courses are inserted, and all 3 tables are generated.
+     To implement this, this lead me to doccumation describing the rollback method: https://stackoverflow.com/questions/15760067/node-js-mysql-transaction
+     The rollback method doccumentation can be found here: https://github.com/mysqljs/mysql#transactions and was copied to create the code below. 
+  */
+
+  sql.beginTransaction(function (err) {
     if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
+      throw err;
     }
-    console.log("created table: ", (req.courseDepartment + req.courseID + req.courseSection + courseMod));
-    result(null, (req.courseDepartment + req.courseID + req.courseSection + courseMod));
+    sql.query(sqlQueries.q_insertCourse, newCourse, (err, res1) => {
+      if (err) {
+        return sql.rollback(function () {
+          throw err;
+        });
+      }
+
+      sql.query(sqlQueries.q_createClasslist, newCourse, (err, res2) => {
+        if (err) {
+          return sql.rollback(function () {
+            throw err;
+          });
+        }
+
+        sql.query(sqlQueries.q_createCalendar, newCourse, (err, res3) => {
+          if (err) {
+            return sql.rollback(function () {
+              throw err;
+            });
+          }
+
+          sql.query(sqlQueries.q_createNotes, newCourse, (err, res4) => {
+            if (err) {
+              return sql.rollback(function () {
+                throw err;
+              });
+            }
+
+            sql.commit(function (err) {
+              result(null, "success");
+              if (err) {
+                return sql.rollback(function () {
+                  throw err;
+                });
+              }
+              console.log("success!");
+            });
+          });
+        });
+      });
+    });
   });
-}
+};
+
+Course.removeCourse = (req, result) => {
+  //console.log(dbTable);
+  sql.query(
+    "Delete FROM courses WHERE departmentID = ? AND courseID = ? AND courseSection = ?",
+    [req.params.departmentID, req.params.courseID, req.params.sectionID],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(
+        "Deleted " + `${res.affectedRows}` + " row from courses"
+      );
+      result(null, res);
+    }
+  );
+};
+
+Course.getCourseInfo = (req, result) => {
+  //console.log(dbTable);
+  sql.query(
+    "SELECT * FROM courses WHERE departmentID = ? AND courseID = ? AND courseSection = ?",
+    [req.params.departmentID, req.params.courseID, req.params.sectionID],
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(
+        "Returned " + `${res.affectedRows}` + " row from courses"
+      );
+      result(null, res);
+    }
+  );
+};
 
 /* Get all courses */
 Course.getAll = (result) => {
@@ -82,127 +185,71 @@ Course.removeAll = (result) => {
       return;
     }
 
-    console.log("deleted " + `${res.affectedRows}` + " users");
+    console.log("deleted " + `${res.affectedRows}` + " courses");
     result(null, res);
   });
 };
 
-// /* remove user by PK */
-// User.removeByPK = (deljson, result) => {
-//   sql.query(
-//     "DELETE FROM users WHERE firstName = ? AND lastName = ? and ID = ?",
-//     [deljson.firstName, deljson.lastName, deljson.ID],
-//     (err, res) => {
-//       if (err) {
-//         console.log("error: ", err);
-//         result(err, null);
-//         return;
-//       }
+/* Access all of a courses calendar information */
+Course.getAllInfo = (dbTable, result) => {
+  //console.log(dbTable);
+  sqlQuery = "SELECT * FROM " + dbTable;
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
 
-//       /* handle no matching user case */
-//       if (res.affectedRows == 0) {
-//         result({ kind: "not found" }, null);
-//         return;
-//       }
-//       console.log("deleted user with ID " + deljson.ID);
-//       result(null, res);
-//     }
-//   );
+    console.log("Retrieved " + `${res.affectedRows}` + " rows from " + dbTable);
+    result(null, res);
+  });
+};
+
+/* Delete all subtable content */
+Course.deleteAllSubtableContent = (dbTable, result) => {
+  //console.log(dbTable);
+  sqlQuery = "DELETE FROM " + dbTable;
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("Deleted " + `${res.affectedRows}` + " rows from " + dbTable);
+    result(null, res);
+  });
+};
+
+Course.postContent = (dbTable, assignment, result) => {
+var sqlQuery = "INSERT INTO " + dbTable + " SET " + assignment;
+sql.query(sqlQuery, (err, res) => {
+  if (err) {
+    console.log("error: ", err);
+    result(err, null);
+    return;
+  }
+
+  console.log("Inserted " + `${res.affectedRows}` + " record into " + dbTable);
+  result(null, res);
+});
+};
+
+// Course.deleteRecord = () => {
+
 // };
 
-// User.updateInfo = (assignmentStrings, userID, result) => {
-//   /* base SQL query to update users table */
-//   var query = "UPDATE users SET ";
+//TO DO
+/*
+  Delete all 3 tables if the course is deleted ?
 
-//   /* Add assignment statements to base SQL query */
-//   for (var i = 0; i < assignmentStrings.length; i++) {
-//     query += assignmentStrings[i];
-//     /* Add a comma after every attribute update except for the last */
-//     if (assignmentStrings.length == 0 || i == assignmentStrings.length - 1) {
-//       /* add WHERE clause at end of query and return */
-//       query += " WHERE ID = " + userID;
-//       break;
-//     } else query += ", ";
-//   }
+  Delete Calendar Event
+  Delete from classlist
+  Delete from Notes
 
-//   //console.log(query);
-
-//   /* Execute update query */
-//   sql.query(query, (err, res) => {
-//     if (err) {
-//       console.log("error: ", err);
-//       result(null, err);
-//       return;
-//     }
-
-//     console.log("updated " + userID);
-//     result(null, assignmentStrings);
-//   });
-// };
-
-// /* get user information by primary key */
-// User.getUser = (userInfo, result) => {
-//   sql.query(
-//     "SELECT * FROM users WHERE firstName = ? AND lastName = ? AND ID = ?",
-//     [userInfo.firstName, userInfo.lastName, userInfo.ID],
-//     (err, res) => {
-//       if (err) {
-//         console.log("error: ", err);
-//         result(err, null);
-//         return;
-//       }
-//       /* handle no matching user case */
-//       if (res.length == 0) {
-//         result({ kind: "no match" }, null);
-//         return;
-//       }
-//       console.log(
-//         "Found user " +
-//           userInfo.firstName +
-//           " " +
-//           userInfo.lastName +
-//           " with ID " +
-//           userInfo.ID
-//       );
-//       result(null, res);
-//     }
-//   );
-// };
-
-// /* get user information by unique ID -> alternative to using entire primary key. More for internal use */
-// User.getByID = (userInfo, result) => {
-//   sql.query("SELECT * FROM users WHERE ID = ?", userInfo.ID, (err, res) => {
-//     if (err) {
-//       console.log("error: ", err);
-//       result(err, null);
-//       return;
-//     }
-//     /* handle no matching user case */
-//     if (res.length == 0) {
-//       result({ kind: "no ID match" }, null);
-//       return;
-//     }
-//     /* res is an array containing values? Need to access elements to get data
-//                 since IDs are unique, this function will only ever return 1 tuple,
-//                 so only res[0] has to be checked.
-//           */
-//     if (
-//       res[0].lastName != userInfo.lastName &&
-//       res[0].firstName == userInfo.firstName
-//     ) {
-//       result({ kind: "no last name match" }, null);
-//       return;
-//     } else if (
-//       res[0].firstName != userInfo.firstName &&
-//       res[0].lastName == userInfo.lastName
-//     ) {
-//       result({ kind: "no first name match" }, null);
-//       return;
-//     } else {
-//       result({ kind: "no first or last name match" }, null);
-//       return;
-//     }
-//   });
-// };
+  Edit Calendar Title/Description/Date/Time
+  Edit Notes 
+*/
 
 module.exports = Course;
