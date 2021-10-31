@@ -36,11 +36,22 @@ module.exports = app => {
     */
     app.get("/courses/:departmentID-:courseID-:sectionID/:content", courses.getAllInfo);
 
-    /* post to a subtable using the desired path */
-    // app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
-
     /* delete all content from a course's subtable */
     app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/all", courses.deleteAllSubtableContent);
 
+    /* post to a subtable using the desired path */
+    app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
 
+    /* delete a record that you posted 
+        HTTP REQUEST: 
+        {
+            "ID" : "ID_OF_LOGGED_IN_USER".
+            "contentID" : "ID_OF_CONTENT_TO_DELETE"
+            "posterID" : "ID_OF_ORIGINAL_POSTER"
+        }
+    */
+    //app.delete("/courses/:departmentID-:courseID-:sectionID/:content/:contentID/:action", courses.deleteRecordRegular);
+
+    /* delete any record */
+    //app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/", courses.deleteRecordAdmin);
 };

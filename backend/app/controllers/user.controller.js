@@ -255,3 +255,14 @@ exports.updateUserInfo = (req, res) => {
     } else res.send(data);
   });
 };
+
+// /* return user type and ID from email and password */
+// exports.getSessionInformation = (req, res) => {
+//   User.getSessionInformation((err, data) => {
+//     if (err)
+//       res.status(500).send({
+//         message: err.message || "Error when retrieving data",
+//       });
+//     else res.send(data);
+//   });
+// };
