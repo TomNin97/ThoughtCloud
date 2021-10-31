@@ -1,46 +1,77 @@
 import axios from 'axios';
-const https = require("https")
 
 
 const baseUrl = "http://localhost:5000";
 const jsonHeader = {
     'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin' : '*',
+    "Access-Control-Allow-Methods" : "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization"
 }
 
+const  User = {
+    id: null,
+    email : null,
+    firstName : null ,
+    lastName : null ,
+    type  : null,
+    setUser : function(id, email, firstName, lastName, type) {
+        this.id =  id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.type = type;
+    },
+    getUserMap : function() {
+        return {
+            "ID" : this.id,
+            "email" : this.email,
+            "firstName" : this.firstName,
+            "lastName" : this.lastName,
+            "type" : this.type
+        }
+   }
+};
+
 export class UserRequests {
-    async createUser(firstName, lastName, email, password, accountType) {
+
+    constructor() {
+        this.user = User;
+    }
+
+        ///duplicate of function in sugnup-page will refactor later
+        isUakronEmail(email) {
+            if (email != null) {
+                return email.includes("uakron.edu");
+            }
+            else return false;
+        }
+    
+         //ensures email is a valid uakron email and then grabs the userId from email
+        getIdFromEmail(email) {
+            var id;
+            if (this.isUakronEmail(email)) {
+                id = email.substring(0, email.search('@'));
+            }
+            return id;
+        }
+
+    async createUser(firstName, lastName, email, password, accountType, id) {
 
         console.log("Creatingn user 13");
-        const jsonHeader = {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin' : '*',
-            "Access-Control-Allow-Methods" : "GET, POST, OPTIONS",
-            "Access-Control-Allow-Headers": "Content-Type, Authorization"
-        }
-        
-        const options = {
-            hostname: "localhost",
-            port: 5000,
-            path: "/users",
-            method: 'POST',
-            headers: jsonHeader
-        }
 
-        var userJson = {
-            "ID" : 434343434,
-            "firstName": firstName,
-            "lastName": lastName,
-            "email": email,
-            "password": password,
-            "type": accountType
-        }
+        this.user.setUser(id, email,firstName, lastName,accountType,)
 
-        const postData = JSON.stringify(userJson);
+        console.table (this.user.getUserMap());
+
+
+        const postData = this.user.getUserMap();
+        postData["password"] = password;
 
        await axios({
              method: "post",
            url : baseUrl + "/users",
-           data :postData,
+           data :JSON.stringify(postData),
            headers : jsonHeader
            
        }).then(data=> {
@@ -51,21 +82,32 @@ export class UserRequests {
        });
     }
 
-    async getUser(firstName, lastName, email, password, accountType) {
-        var userJson = {
-            "firstName": firstName,
-            "lastName": lastName,
+
+
+    async loginUser(email, password) {
+        var id = this.getIdFromEmail(email);
+        if(id == null) return null;
+
+        var credentials = {
             "email": email,
+            "id" :id,
             "password": password,
-            "type": accountType
         }
 
-        // const response = await fetch(baseUrl + "/users/find", {
-        //     method : 'post',
-        //     body : JSON.stringify(userJson),
-        //     headers : jsonHeader
-        // })
+      return  await  axios({
+            method : "post",
+            data : JSON.stringify(credentials),
+            headers : jsonHeader
+        }).then(result=> {
+            if(result.status == 200) {
+               const data =  result.data;
+                this.user.setUser(data['id'], data['email'], data['firstName'], data['lastName'], data['type']);
+                return true;
+            }
+            else {
+                return false;
+            }
+        })
 
-        //   const data  = await response.json();
     }
 }

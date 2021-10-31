@@ -10,7 +10,7 @@ export class SignUpPage extends React.Component {
         this.userRequests = new UserRequests();
 
         this.state = {
-            userId: props.firstName ?? "",
+            userId: props.id ?? "",
             firstName: props.firstName ?? "Mike",
             lastName: props.lastName ?? "",
             accountType: props.accountType ?? "student",
@@ -20,18 +20,36 @@ export class SignUpPage extends React.Component {
         }
     }
 
-    //this tries to login the user
-    login = () => {
-        alert("logging in with " + this.state.password);
+    isUakronEmail(email) {
+        if (email != null) {
+            return email.includes("uakron.edu");
+        }
+        else return false;
+    }
 
+     //ensures email is a valid uakron email and then grabs the userId from email
+    getIdFromEmail(email) {
+        var id;
+        if (this.isUakronEmail(email)) {
+            id = email.substring(0, email.search('@'));
+        }
+        
+        return id;
     }
 
     signUp = async () => {
         console.log("Siging up 29");
-        await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student");
-        alert("signing up with " + this.state.password);
+        var id = this.getIdFromEmail(this.state.email);
+        console.log("ID is " + id);
+        if (id != null) {
+            this.setState({ "userId": id });
+            await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student", this.state.userId);
+            alert("signing up with " + this.state.email);
+        }
+        else {
+            alert("Not a uakron email use a uakron email!!");
+        }
     }
-
     handleChange = (field, newContent) => {
         this.setState({ [field]: newContent.target.value });
     }
@@ -44,10 +62,6 @@ export class SignUpPage extends React.Component {
                     <h1>ThoughtCloud</h1>
                 </div>
                 <div className="login-form">
-
-                    <label>UanetID</label>
-                    <input type="number" required value={this.state.userId} onChange={(content) => this.handleChange("userId", content)} /><br />
-
                     <label>First name</label>
                     <input type="text" required value={this.state.firstName} onChange={(content) => this.handleChange("firstName", content)} /><br />
 
