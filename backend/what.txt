@@ -1,0 +1,45 @@
+/* update user info */
+exports.updateUserInfo = (req, res) => {
+  /* validate the request */
+  if (!req.body) {
+    res.status(400).send({
+      message: "Content can not be empty!",
+    });
+  }
+  /* object to pass user information easily */
+  const userInfo = {
+    ID: req.body.ID, // ID from URL
+    firstName: req.body.firstName, // Provided first name
+    lastName: req.body.lastName, // Provided last name
+  };
+  const newInfo = {
+    firstName: req.body.newFirstName,
+    lastName: req.body.newLastName,
+    email: req.body.newEmail,
+    password: req.body.newPassword,
+    type: req.body.newType,
+  };
+  /* can not modify a user whose PK does not exist */
+  User.getUser(userInfo, (err, data) => {
+    if (err) {
+      res.status(500).send({
+        message: err.message || "User does not exist",
+      });
+      return;
+      /* If to this point, the passed primary key is valid */
+      oldData = data;
+    } else {
+      for (var i = 0; i < userInfo.length; ++i) {
+        if (newInfo[i] != null) {
+          User.updateUserInfo(newInfo[i], (err, data) => {
+            if (err) {
+              res.status(500).send({
+                message: err.message || "Error when updating user info",
+              });
+            }
+          });
+        }
+      }
+    }
+  });
+};

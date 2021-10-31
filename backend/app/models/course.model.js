@@ -44,14 +44,14 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[1] +
-    " (posterID VARCHAR(8) NOT NULL UNIQUE, eventID INT NOT NULL UNIQUE AUTO_INCREMENT, eventDate DATE NOT NULL, startTime TIME NOT NULL, endTime TIME NOT NULL, eventTitle VARCHAR(60) NOT NULL, description VARCHAR(200), PRIMARY KEY(posterID, eventID))";
+    " (posterID VARCHAR(8) NOT NULL, eventID INT NOT NULL UNIQUE AUTO_INCREMENT, eventDate DATE NOT NULL, startTime TIME NOT NULL, endTime TIME NOT NULL, eventTitle VARCHAR(60) NOT NULL, description VARCHAR(200), PRIMARY KEY(posterID, eventID))";
   var q4 =
     "CREATE TABLE " +
     courseInfo.departmentID +
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[2] +
-    " (posterID VARCHAR(8) NOT NULL UNIQUE, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BIT(1) NOT NULL DEFAULT 0, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID))";
+    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID))";
 
   /* object to store formed queries */
   var queries = {
@@ -222,16 +222,32 @@ Course.deleteAllSubtableContent = (dbTable, result) => {
   });
 };
 
+Course.postContent = (dbTable, assignment, result) => {
+var sqlQuery = "INSERT INTO " + dbTable + " SET " + assignment;
+sql.query(sqlQuery, (err, res) => {
+  if (err) {
+    console.log("error: ", err);
+    result(err, null);
+    return;
+  }
+
+  console.log("Inserted " + `${res.affectedRows}` + " record into " + dbTable);
+  result(null, res);
+});
+};
+
+// Course.deleteRecord = () => {
+
+// };
 
 //TO DO
 /*
   Delete all 3 tables if the course is deleted ?
-  Post Calendar Event
-  Add To Classlist
-  Post Notes
+
   Delete Calendar Event
   Delete from classlist
   Delete from Notes
+
   Edit Calendar Title/Description/Date/Time
   Edit Notes 
 */
