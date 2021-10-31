@@ -19,15 +19,28 @@ module.exports = app => {
     /* create a new course */
     app.post("/courses", courses.create);
 
-    /* get all course information */
+    /* remove a course by its primary key */
+    app.delete("/courses/:departmentID-:courseID-:sectionID/delete", courses.removeCourse);
+
+    /* get a course by its primary key */
+    app.get("/courses/:departmentID-:courseID-:sectionID/", courses.getCourseInfo);
+
+    /* get all courses in course table */
     app.get("/courses", courses.getAll);
 
-    /* remove all course information */
+    /* remove all courses in course table */
     app.delete("/courses/all", courses.removeAll);
 
-    // /* get a course by its primary key */
-    //app.get("/courses/:courseID&sectionID/", courses.findCourse);
+    /* get a course's information in a subtable
+       in the 'content' parameter, provide the name of the subtable to print
+    */
+    app.get("/courses/:departmentID-:courseID-:sectionID/:content", courses.getAllInfo);
 
-    // /* remove a course by their primary key */
-    // app.delete("/course", courses.removeByPK);
+    /* post to a subtable using the desired path */
+    // app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
+
+    /* delete all content from a course's subtable */
+    app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/all", courses.postContent);
+
+
 };

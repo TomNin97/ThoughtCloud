@@ -95,7 +95,7 @@ exports.removeByPK = (req, res) => {
     return;
   }
 
-  /* object to pasS information about user to be deleted easily */
+  /* object to pass information about user to be deleted easily */
   const delInfo = {
     ID: req.body.ID, // ID from URL
     firstName: req.body.firstName, // Provided first name
