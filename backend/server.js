@@ -8,14 +8,25 @@ const bodyParser = require("body-parser");
 const express = require("express");
 const cors = require("cors");
 
+const session = require("express-session");
 
 const app = express();
 
-/* interprete JSON information */
-app.use(bodyParser.json());
+/* session code taken from example found here: https://www.js-tutorials.com/nodejs-tutorial/node-js-user-authentication-using-mysql-express-js/ */
 
-/* ??? */
-app.use(bodyParser.urlencoded( { extended: true }));
+app.use(session({
+    secret: 'cookie_secret',
+    resave: true,
+    saveUninitialized: true,
+    cookie: {maxAge: 600000}
+}));
+
+
+// /* interprete JSON information */
+ app.use(bodyParser.json());
+
+// /* ??? */
+ app.use(bodyParser.urlencoded( { extended: true }));
 
 app.use(cors());
 
@@ -25,6 +36,7 @@ app.get("/", (req, res) => {
 });
 
 /* require all route files */
+require("./app/routes/auth.routes.js")(app)
 require("./app/routes/user.routes.js")(app);
 require("./app/routes/course.routes.js")(app);
 

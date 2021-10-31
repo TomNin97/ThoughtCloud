@@ -33,4 +33,7 @@ module.exports = app => {
 
     /* remove a user by their primary key */
     app.delete("/users/", users.removeByPK);
+
+    // /* return user type and ID from email and password */
+    // app.get("/users/information", users.getSessionInformation);
 };

@@ -98,7 +98,7 @@ exports.removeByPK = (req, res) => {
     return;
   }
 
-  /* object to pasS information about user to be deleted easily */
+  /* object to pass information about user to be deleted easily */
   const delInfo = {
     ID: req.body.ID, // ID from URL
     firstName: req.body.firstName, // Provided first name
@@ -258,3 +258,14 @@ exports.updateUserInfo = (req, res) => {
     } else res.send(data);
   });
 };
+
+// /* return user type and ID from email and password */
+// exports.getSessionInformation = (req, res) => {
+//   User.getSessionInformation((err, data) => {
+//     if (err)
+//       res.status(500).send({
+//         message: err.message || "Error when retrieving data",
+//       });
+//     else res.send(data);
+//   });
+// };
