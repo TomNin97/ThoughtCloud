@@ -42,6 +42,7 @@ exports.create = (req, res) => {
     return;
   }
 
+  console.table(req.body);
   /* Create new user if valid request */
   const user = new User({
     ID: req.body.ID,
@@ -51,6 +52,8 @@ exports.create = (req, res) => {
     password: req.body.password,
     type: req.body.type,
   });
+
+  console.table(user);
 
   /* Save a new user */
   User.create(user, (err, data) => {

@@ -32,6 +32,7 @@ Auth.login = (userInfo, currentSession, result) =>{
           result(err, null);
           return;
         }
+
         if(res.length){
             currentSession.userID = res[0].ID;
             currentSession.firstName = res[0].firstName;

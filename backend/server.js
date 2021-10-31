@@ -6,7 +6,10 @@
 /* required packages */
 const bodyParser = require("body-parser");
 const express = require("express");
+const cors = require("cors");
+
 const session = require("express-session");
+
 const app = express();
 
 /* session code taken from example found here: https://www.js-tutorials.com/nodejs-tutorial/node-js-user-authentication-using-mysql-express-js/ */
@@ -24,6 +27,8 @@ app.use(session({
 
 // /* ??? */
  app.use(bodyParser.urlencoded( { extended: true }));
+
+app.use(cors());
 
 /* home route */
 app.get("/", (req, res) => {
