@@ -40,7 +40,7 @@ module.exports = app => {
     // app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
 
     /* delete all content from a course's subtable */
-    app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/all", courses.postContent);
+    app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/all", courses.deleteAllSubtableContent);
 
 
 };

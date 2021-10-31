@@ -134,3 +134,16 @@ exports.getAllInfo = (req, res) => {
 // exports.postContent = (req, res) => {
 
 // }
+
+/* access all of a course's information */
+exports.deleteAllSubtableContent = (req, res) => {
+  //console.log(req.params);
+  var dbTable = req.params.departmentID + req.params.courseID + req.params.sectionID + req.params.content;
+  Course.deleteAllSubtableContent(dbTable, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Error when deleting data",
+      });
+    else res.send(data);
+  });
+};

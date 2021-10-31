@@ -206,6 +206,23 @@ Course.getAllInfo = (dbTable, result) => {
   });
 };
 
+/* Delete all subtable content */
+Course.deleteAllSubtableContent = (dbTable, result) => {
+  //console.log(dbTable);
+  sqlQuery = "DELETE FROM " + dbTable;
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("Deleted " + `${res.affectedRows}` + " rows from " + dbTable);
+    result(null, res);
+  });
+};
+
+
 //TO DO
 /*
   Delete all 3 tables if the course is deleted ?
