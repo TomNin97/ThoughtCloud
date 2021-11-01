@@ -17,9 +17,12 @@ export class LoginPage extends React.Component {
     }
 
     //this tries to login the user
-    login = () => {
-        alert("logging in with " + this.state.password);
+    login = async() => {
+       const success = await  this.userRequests.loginUser(this.state.email, this.state.password);
 
+       if(success) {
+           
+       }
     }
 
 

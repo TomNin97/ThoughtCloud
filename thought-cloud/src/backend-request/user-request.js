@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { SessionItems } from './session-items';
 
 
 const baseUrl = "http://localhost:5000";
@@ -37,6 +38,7 @@ export class UserRequests {
 
     constructor() {
         this.user = User;
+        this.sessionItems = new SessionItems();
     }
 
         ///duplicate of function in sugnup-page will refactor later
@@ -90,24 +92,33 @@ export class UserRequests {
 
         var credentials = {
             "email": email,
-            "id" :id,
             "password": password,
         }
 
       return  await  axios({
             method : "post",
             data : JSON.stringify(credentials),
-            headers : jsonHeader
+            headers : jsonHeader,
+            url : baseUrl + "/login"
         }).then(result=> {
             if(result.status == 200) {
-               const data =  result.data;
+               const data = result.data;
+               console.log("data is:");
+               console.log(data);
+                for(const item in data[0]) {
+                    console.log("item:" + item + data[0][`${item}`]);
+                    this.sessionItems.setItem(`${item}`, data[0][`${item}`]);
+                }
                 this.user.setUser(data['id'], data['email'], data['firstName'], data['lastName'], data['type']);
                 return true;
             }
             else {
+                console.log("unsuccessful login" + result.error);
                 return false;
             }
+        }).error(e=> {
+            console.log("")
+            return false;
         })
-
     }
 }
