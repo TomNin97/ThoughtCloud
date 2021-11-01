@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { UserRequests } from '../backend-request/user-request';
-
+import { Route, Switch } from 'react-router-dom';
+import { DashBoard } from '../account_page/account_page';
 
 
 export class LoginPage extends React.Component {
@@ -17,12 +18,16 @@ export class LoginPage extends React.Component {
     }
 
     //this tries to login the user
-    login = async() => {
-       const success = await  this.userRequests.loginUser(this.state.email, this.state.password);
+    login = async () => {
+        const success = await this.userRequests.loginUser(this.state.email, this.state.password);
 
-       if(success) {
-           
-       }
+        if (success) {
+            console.log("Sucesss!!!!");
+            window.location = '/dashboard';
+        }
+        else {
+            alert("Try again!!!!!");
+        }
     }
 
 
@@ -54,7 +59,9 @@ export class LoginPage extends React.Component {
                     {/* This will be activated if the sign up button is clicked */}
                     <div className="login-button-wrapper">
                         <button name="login-button" onClick={this.login}>Login</button>
+                        <button name="sign-up-button" onClick={()=>window.location ="/signup"}>Sign Up</button>
                     </div>
+
                 </div>
             </div>
         );
