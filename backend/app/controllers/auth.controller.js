@@ -14,21 +14,24 @@ const { json } = require("body-parser");
 const Auth = require("../models/auth.model");
 
 exports.login = (req, res) => {
-    console.log(req.body.email);
-    currentSession = req.session;
+    console.log("Email" +req.body.email);
+    var currentSession = req.session;
     const userInfo = {
         email : req.body.email,
         password : req.body.password,
     };
 
+    console.table(userInfo);
+
 
     /* Save a new course */
     Auth.login(userInfo, currentSession, (err, data) => {
+      console.table(currentSession);
     /* catch errors */
     if (err)
       return res.status(500).send({
-        message: err.message || "Error when creating new course",
+        message: err.message ?? "Error when logining user",
       });
-    /* otherwise send data */ else res.send(data);
+    /* otherwise send data */ else res.send(data); 
   });
 };

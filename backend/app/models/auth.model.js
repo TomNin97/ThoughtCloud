@@ -26,13 +26,14 @@ const Auth = function (auth) {
   
 /* Auth code created from code obtained here: https://www.js-tutorials.com/nodejs-tutorial/node-js-user-authentication-using-mysql-express-js/ */
 Auth.login = (userInfo, currentSession, result) =>{
-    sql.query("SELECT * FROM users WHERE email = ? and password = ?", [userInfo.email, userInfo.password], (err, res) => {
-        if (err) {
+    sql.query(`SELECT * FROM users WHERE email =  '${userInfo.email}' and password = '${userInfo.password}'`, (err, res) => {
+        if (err || res.length == 0) {
           console.log("error: ", err);
           result(err, null);
           return;
         }
-
+        console.log("Before res results");
+        console.table(res);
         if(res.length){
             currentSession.userID = res[0].ID;
             currentSession.firstName = res[0].firstName;
