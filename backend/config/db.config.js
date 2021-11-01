@@ -1,8 +1,8 @@
 module.exports = {
-    HOST: "192.168.1.151",
+    HOST: "127.0.0.1",
     PORT: "3306",
     USER: "root",
-    PASSWORD: "moneyMaker1",
+    PASSWORD: "awesomesauce",
     DB: "thoughtCloud"
   };
   
