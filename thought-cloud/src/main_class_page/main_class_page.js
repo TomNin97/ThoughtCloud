@@ -42,13 +42,6 @@ export class MainClassPage extends React.Component {
        return (
        <div className= "page-wrapper">
            <Header title= {this.state.currentPage}/>
-            <div className = "page-selection-section">
-                <MainPageButtons title = "Notes"/>
-                <MainPageButtons title = "Calender"/>
-                <MainPageButtons title = "Class List"/>
-            </div>
-            <br/>
-            <br/>
            <div className= "sub-page-wrapper">
                 {this.getCurrentPage(this.state.currentPage)}
            </div>
