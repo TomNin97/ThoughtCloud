@@ -27,13 +27,13 @@ export class SignUpPage extends React.Component {
         else return false;
     }
 
-     //ensures email is a valid uakron email and then grabs the userId from email
+    //ensures email is a valid uakron email and then grabs the userId from email
     getIdFromEmail(email) {
         var id;
         if (this.isUakronEmail(email)) {
             id = email.substring(0, email.search('@'));
         }
-        
+
         return id;
     }
 
@@ -43,8 +43,15 @@ export class SignUpPage extends React.Component {
         console.log("ID is " + id);
         if (id != null) {
             this.setState({ "userId": id });
-            await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student", this.state.userId);
-            alert("signing up with " + this.state.email);
+
+            const isSuccess = await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student", this.state.userId);
+            if (isSuccess) {
+                console.log("sucesssfully created account");
+                window.location ='/dashboard';
+            }
+            else {
+                alert("Could not sign you up, try again! ");
+            }
         }
         else {
             alert("Not a uakron email use a uakron email!!");
@@ -76,11 +83,14 @@ export class SignUpPage extends React.Component {
                     <label>password</label>
                     <input type="password" required value={this.state.password} onChange={(content) => this.handleChange("password", content)} /><br />
                     {/* This will be activated if the sign up button is clicked */}
-                    <div className="login-button-wrapper">
-                        <button name="login-button" onClick={this.login}>Login</button>
-                    </div>
-                    <div className="sign-up-button-wrapper">
-                        <button name="sign-up-button" onClick={this.signUp} >Sign Up</button>
+
+                    <div>
+                        <div className="sign-up-button-wrapper">
+                            <button name="sign-up-button" onClick={this.signUp} >Sign Up</button>
+                        </div>
+                        <div className="login-button-wrapper">
+                            <button name="login-button" onClick={() => window.location = "/login"}>Login</button>
+                        </div>
                     </div>
                 </div>
             </div>
