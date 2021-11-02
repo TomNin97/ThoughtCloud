@@ -243,7 +243,16 @@ exports.postContent = (req, res) => {
     req.params.courseID +
     req.params.sectionID +
     req.params.content;
-  Course.postContent(dbTable, formQuery(req), (err, data) => {
+
+   var masterInfo = {
+     ID : req.body.ID,
+     departmentID : req.params.departmentID,
+     courseID : req.params.courseID,
+     sectionID : req.params.sectionID,
+     dest : req.params.content
+   } 
+
+  Course.postContent(masterInfo, dbTable, formQuery(req), (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Error when deleting data",
@@ -251,6 +260,18 @@ exports.postContent = (req, res) => {
     else res.send(data);
   });
 };
+
+/* find all the clases that a student is a member of */
+exports.getCourseMembership = (req, res) => {
+  var idToFInd = req.params.userID;
+  Course.getCourseMembership(idToFInd, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Error when finding user's courses",
+      });
+    else res.send(data);
+  });
+}; 
 
 // exports.deleteRecord = (req, res) => {
 //   Course.deleteRecord((err, data) => {

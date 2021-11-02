@@ -42,7 +42,7 @@ Auth.login = (userInfo, currentSession, result) =>{
         else{
             console.log("invalid username and/or password");
         }
-        result(null, res);   
+        result(err, res);   
       });
     };    
 

@@ -37,7 +37,7 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[0] +
-    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL UNIQUE, lastName VARCHAR(45) NOT NULL UNIQUE, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE)";
+    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL, lastName VARCHAR(45) NOT NULL, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE)";
   var q3 =
     "CREATE TABLE " +
     courseInfo.departmentID +
@@ -134,9 +134,7 @@ Course.removeCourse = (req, result) => {
         return;
       }
 
-      console.log(
-        "Deleted " + `${res.affectedRows}` + " row from courses"
-      );
+      console.log("Deleted " + `${res.affectedRows}` + " row from courses");
       result(null, res);
     }
   );
@@ -154,9 +152,7 @@ Course.getCourseInfo = (req, result) => {
         return;
       }
 
-      console.log(
-        "Returned " + `${res.affectedRows}` + " row from courses"
-      );
+      console.log("Returned " + `${res.affectedRows}` + " row from courses");
       result(null, res);
     }
   );
@@ -222,16 +218,64 @@ Course.deleteAllSubtableContent = (dbTable, result) => {
   });
 };
 
-Course.postContent = (dbTable, assignment, result) => {
-var sqlQuery = "INSERT INTO " + dbTable + " SET " + assignment;
-sql.query(sqlQuery, (err, res) => {
+Course.postContent = (masterInfo, dbTable, assignment, result) => {
+  var sqlQuery = "INSERT INTO " + dbTable + " SET " + assignment;
+  if (masterInfo.dest == "classlist") {
+    sql.beginTransaction(function (err) {
+      if (err) {
+        throw err;
+      }
+      sql.query(sqlQuery, (err, res1) => {
+        if (err) {
+          return sql.rollback(function () {
+            throw err;
+          });
+        }
+
+        sql.query("INSERT INTO masterlist SET ID = ?, departmentID = ?, courseID = ?, sectionID = ?", [masterInfo.ID, masterInfo.departmentID, masterInfo.courseID, masterInfo.sectionID], (err, res2) => {
+          if (err) {
+            return sql.rollback(function () {
+              throw err;
+            });
+          }
+          sql.commit(function (err) {
+            result(null, "success");
+            if (err) {
+              return sql.rollback(function () {
+                throw err;
+              });
+            }
+            console.log("success!");
+          });
+        });
+      });
+    });
+  } else {
+    sql.query(sqlQuery, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(
+        "Inserted " + `${res.affectedRows}` + " record into " + dbTable
+      );
+      result(null, res);
+    });
+  }
+};
+
+Course.getCourseMembership = (userID, result) => {
+  console.log(userID);
+sql.query("SELECT departmentID, courseID, sectionID FROM masterlist WHERE ID = '" + userID + "'", (err, res) => {
   if (err) {
     console.log("error: ", err);
     result(err, null);
     return;
   }
 
-  console.log("Inserted " + `${res.affectedRows}` + " record into " + dbTable);
+  console.log("found " + `${res.affectedRows}` + " matches");
   result(null, res);
 });
 };

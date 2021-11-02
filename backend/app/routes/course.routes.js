@@ -42,6 +42,9 @@ module.exports = app => {
     /* post to a subtable using the desired path */
     app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
 
+    /* return all of the courses that a user is a part of IN PROGRESS */
+    app.get("/:userID/courses", courses.getCourseMembership);
+
     /* delete a record that you posted 
         HTTP REQUEST: 
         {
