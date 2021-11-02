@@ -12,10 +12,9 @@ function App() {
   return (
     <div className="App">
      <Switch>
-     
-      <Route path='/'> <LoginPage/> </Route>
-      <Route path='/notes'> <NotesPage/> </Route>
-      <Route path='/signup'> <SignUpPage/> </Route>
+      <Route path='/' exact> <LoginPage/> </Route>
+      <Route path='/notes' exact> <NotesPage/> </Route>
+      <Route path='/signup' exact> <SignUpPage/> </Route>
       {/* <Route path='/' exact> <MainClassPage/> </Route> */}
       </Switch>
     </div>

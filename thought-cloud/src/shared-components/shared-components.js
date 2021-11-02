@@ -13,7 +13,7 @@ const CustomButton = (props) => {
 const Header = (props) => {
     return (
         <div className="header-wrapper">
-            <h1>{props.title}</h1>
+            <h1> {props.title} </h1>
             <div className = "page-selection-section">
                 <MainPageButtons title = "Home" propRoute = '/'/>
                 <MainPageButtons title = "Notes" propRoute = '/notes'/>
@@ -25,6 +25,15 @@ const Header = (props) => {
             <br/>
             <br/>
         </div>
+    );
+}
+
+const SearchBar = (props) => {
+    function filter() {
+    }
+
+    return(
+        <input id="searchbar" onkeyup="filter()" type="text" name="search" placeholder="Search"></input>
     );
 }
 
@@ -55,7 +64,7 @@ const CalenderComponent = (props) => {
     );
 }
 
-export { CustomButton, Header, ClassButton, CalenderComponent,MainPageButtons };
+export { CustomButton, Header, ClassButton, CalenderComponent,MainPageButtons, SearchBar };
 
 
 
