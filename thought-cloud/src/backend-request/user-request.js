@@ -70,7 +70,7 @@ export class UserRequests {
         const postData = this.user.getUserMap();
         postData["password"] = password;
 
-       await axios({
+       return await axios({
              method: "post",
            url : baseUrl + "/users",
            data :JSON.stringify(postData),
@@ -78,9 +78,15 @@ export class UserRequests {
            
        }).then(data=> {
           console.log("Data is:" + data);
+          if(data != null)
+          return true;
+          else {
+              return false;
+          }
        }).catch(error=> {
            console.log("Error");
            console.table(error);
+           return false;
        });
     }
 
@@ -116,8 +122,8 @@ export class UserRequests {
                 console.log("unsuccessful login" + result.error);
                 return false;
             }
-        }).error(e=> {
-            console.log("")
+        }).catch(e => {
+            console.log(e)
             return false;
         })
     }
