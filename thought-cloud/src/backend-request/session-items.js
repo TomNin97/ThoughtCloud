@@ -1,5 +1,5 @@
 export class SessionItems {
-    constructor() {
+constructor() {
         this.localStorage = window.localStorage;
     }
 

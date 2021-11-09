@@ -33,6 +33,10 @@ export function Course(departmentID, courseID, courseSection, courseName, profes
 };
 
 export default class CourseRequests {
+
+    constructor () {
+        this.sessionItems = new SessionItems();
+    }
     async addCourse(departmentID, courseId, courseSection, courseName, professorID, assistantID) {
         var newCourse = new Course(departmentID, courseId, courseSection, courseName, professorID, assistantID);
 
@@ -64,8 +68,8 @@ export default class CourseRequests {
     //this is temporarily using a get all course
     async getUserCourses() {
 
-        const userId = "";
-        const authenticationCode = "";
+        const userId = this.sessionItems.getItem("id");
+        const authenticationCode = "authCode";
         const postBody = {
             "userId": userId,
             "authentication": authenticationCode
@@ -93,5 +97,19 @@ export default class CourseRequests {
         }).catch(error => {
             return [];
         });
+    }
+
+    async deleteCourse(course) {
+
+        const userId = this.sessionItems.getItem("id");
+
+        if(userId === course.professorID) {
+            axios({
+                method : "delete",
+                headers : jsonHeader,
+                url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-:${course.sectionID}/:content/delete/alls`
+            })
+        }
+
     }
 }
