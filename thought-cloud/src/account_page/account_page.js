@@ -14,8 +14,21 @@ export class DashBoard extends React.Component {
         super(props);
         this.state = {
             isTeacher: props.isTeacher,
-
+            classes : [],
+            courseRequest : new CourseRequests()
         }
+
+
+        this.state.courseRequest.getUserCourses().then(
+           
+            value => {
+                console.log("Data gotten from req is ",value )
+                this.setState({"classes" : value});
+                console.log("here",this.state.classes);
+            }
+        )
+
+
     }
 
     onClassButtonClicked(className = "No class", classId) {
@@ -28,7 +41,7 @@ export class DashBoard extends React.Component {
 
 
     showNewCourseForm() {
-        return <Popup trigger={<CustomButton title="Add New Class" position="right center" />
+        return <Popup trigger={<CustomButton title="Add New Class" position="center" />
         }>
             <div>
                 <h1>Add A New Course</h1>
@@ -45,14 +58,8 @@ export class DashBoard extends React.Component {
                     <input type="email" id="emailId" />
                     <input type="submit" onClick={
                         async () => {
-
-                            var newCourse = Course;
-                            const courseRequest = new CourseRequests();
-                           // newCourse.setCourse(this.getInputValueById("departmentId"), this.getInputValueById("courseId"), this.getInputValueById("courseSection"), this.getInputValueById("courseName"), this.getInputValueById("emailId"));
-                            //console.table(newCourse.getCourseMap());
-
                             alert("hi");
-                            var isSuccess = await  courseRequest.addCourse(this.getInputValueById("departmentId"), 
+                            var isSuccess = await  this.state.courseRequest.addCourse(this.getInputValueById("departmentId"), 
                             this.getInputValueById("courseId"), 
                             this.getInputValueById("courseSection"), 
                             this.getInputValueById("courseName"), 
@@ -86,7 +93,8 @@ export class DashBoard extends React.Component {
                 </div>
                 <div className="avaialble-class-list">
                     <ul>
-                        {this.createdClasses.map(classItem => <ClassButton title={classItem} onClick={() => this.onClassButtonClicked(classItem, 0)} />)}
+                        {this.state.classes != null ? this.state.classes.map(classItem => <ClassButton title={classItem.courseName} onClick={() => this.onClassButtonClicked(classItem, 0) 
+                        } />) : "No Classes yet"}
                     </ul>
                 </div>
             </div>
