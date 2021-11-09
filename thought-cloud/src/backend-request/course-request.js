@@ -34,9 +34,8 @@ export function Course(departmentID, courseID, courseSection, courseName, profes
 
 export default class CourseRequests {
     async addCourse(departmentID, courseId, courseSection, courseName, professorID, assistantID) {
-        var newCourse = Course;
+        var newCourse = new Course(departmentID, courseId, courseSection, courseName, professorID, assistantID);
 
-        newCourse.setCourse(departmentID, courseId, courseSection, courseName, professorID, assistantID);
         console.table(newCourse.getCourseMap());
 
         const CourseJson = newCourse.getCourseMap();
