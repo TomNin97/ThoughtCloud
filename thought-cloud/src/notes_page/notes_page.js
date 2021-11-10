@@ -2,7 +2,17 @@ import React from 'react';
 import { Header, CalenderComponent, CustomButton, SearchBar } from '../shared-components/shared-components';
 
 
-//enums for identifying pages
+
+function NoteItem(props) {
+
+    return (
+        <div className = "note-item-wrapper" style= {{margin : "5px 5px 0px 5px"}}>
+            <img src = {props.url}/>
+            <h1>{props.text}</h1>
+           
+        </div>
+    );
+}
 
 function generate_table() {
   // get the reference for the body
@@ -41,8 +51,15 @@ function generate_table() {
 
 export class NotesPage extends React.Component {
 
+
     constructor(props) {
         super(props);
+
+//temp notes
+        this.state= {
+            notes : [1,2,3,4,5,6,7,8,9,10]
+        }
+
         this.VALID_NOTES_KEYS = [
           "posterID",
           "uploadDT",
@@ -55,7 +72,17 @@ export class NotesPage extends React.Component {
         ];
     };
 
+
+
     render() {
+
+        //another option for creating notes. We can use css to wrap  thus making it more dynamic when the screen sizes change
+        return (
+            <div className = "notes-page-wrapper" style = {{display : "flex", flexWrap : "true", width : "100vw"}}>
+                {this.state.notes.map(e=> <NoteItem url = "https://picsum.photos/200/300" text= {e}/>)}
+            </div>
+        );
+
        return (
        <div className= "page-wrapper">
            <Header title= "Notes"/>
@@ -68,5 +95,6 @@ export class NotesPage extends React.Component {
            </table>
        </div>
        );
+
     }
 }

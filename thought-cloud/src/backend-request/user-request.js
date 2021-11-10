@@ -77,7 +77,7 @@ export class UserRequests {
            headers : jsonHeader
            
        }).then(data=> {
-          console.log("Data is:" + data);
+          console.log("Course Data is:" + data);
           if(data != null)
           return true;
           else {

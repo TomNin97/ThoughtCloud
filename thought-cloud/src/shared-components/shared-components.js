@@ -1,7 +1,9 @@
 import Calender from 'react-calendar';
 import React, { useState } from 'react';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { SessionItems } from '../backend-request/session-items';
 
+const sessionItems = new SessionItems();
 const CustomButton = (props) => {
     return (
         <div className="button-wrapper">
@@ -13,17 +15,22 @@ const CustomButton = (props) => {
 const Header = (props) => {
     return (
         <div className="header-wrapper">
-            <h1> {props.title} </h1>
-            <div className = "page-selection-section">
-                <MainPageButtons title = "Home" propRoute = '/'/>
-                <MainPageButtons title = "Notes" propRoute = '/notes'/>
-                <MainPageButtons title = "Class List"/>
-                <MainPageButtons title = "Account" propRoute = '/account'/>
-                <MainPageButtons title = "Log In" propRoute = "/login"/>
-                <MainPageButtons title = "Sign Up" propRoute = "/signup"/>
+
+            <h1>{props.title}</h1>
+            <div className="page-selection-section" style={{ display: "flex" }}>
+                <MainPageButtons title="Home" propRoute='/' />
+                <MainPageButtons title="Notes" propRoute='/course-center' />
+                <MainPageButtons title="Calender" propRoute='/course-center' />
+                <MainPageButtons title="Class List" propRoute="/course-center" />
+                <MainPageButtons title="Account" propRoute='/account' />
+
+                {sessionItems.getItem("id") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
+                {sessionItems.getItem("id") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
+                {sessionItems.getItem("id") != null ? <MainPageButtons title="Sign Out" propRoute="/login" /> : null}
+
             </div>
-            <br/>
-            <br/>
+            <br />
+            <br />
         </div>
     );
 }
@@ -47,8 +54,8 @@ const ClassButton = (props) => {
 
 const MainPageButtons = (props) => {
     return (
-        <div className = "button-wrapper">
-            <Link to={props.propRoute}><button onClick = {props.onClick}>{props.title}</button></Link>
+        <div className="button-wrapper">
+            <Link to={props.propRoute}><button onClick={props.onClick}>{props.title}</button></Link>
         </div>
     );
 }
@@ -65,6 +72,7 @@ const CalenderComponent = (props) => {
 }
 
 export { CustomButton, Header, ClassButton, CalenderComponent,MainPageButtons, SearchBar };
+
 
 
 
