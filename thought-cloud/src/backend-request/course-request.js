@@ -112,4 +112,12 @@ export default class CourseRequests {
         }
 
     }
+
+    async getClasslist() {
+
+    }
+
+    async deleteUser() {
+        
+    }
 }
