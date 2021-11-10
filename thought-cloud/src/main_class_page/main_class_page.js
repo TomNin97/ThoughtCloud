@@ -1,4 +1,5 @@
 import React from 'react';
+import { ClassListPage } from '../classlist_page/classlist_page';
 import { NotesPage } from '../notes_page/notes_page';
 import { Header, CalenderComponent, MainPageButtons } from '../shared-components/shared-components';
 import { CalenderPage } from './calender-page';
@@ -19,7 +20,7 @@ export class MainClassPage extends React.Component {
         this.state = {
             className: props.mainTitle,
             classId: props.classId,
-            currentPage : Pages.NotesPage
+            currentPage : Pages.ClassListPage
         }
     }
 
@@ -32,7 +33,7 @@ export class MainClassPage extends React.Component {
                 return <CalenderPage/>;
             break;
             case Pages.ClassListPage :
-                return "";
+                return <ClassListPage/>;
             break;
             default :
             return "";
