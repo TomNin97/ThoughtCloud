@@ -15,6 +15,7 @@ const CustomButton = (props) => {
 const Header = (props) => {
     return (
         <div className="header-wrapper">
+
             <h1>{props.title}</h1>
             <div className="page-selection-section" style={{ display: "flex" }}>
                 <MainPageButtons title="Home" propRoute='/' />
@@ -26,10 +27,20 @@ const Header = (props) => {
                 {sessionItems.getItem("id") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
                 {sessionItems.getItem("id") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
                 {sessionItems.getItem("id") != null ? <MainPageButtons title="Sign Out" propRoute="/login" /> : null}
+
             </div>
             <br />
             <br />
         </div>
+    );
+}
+
+const SearchBar = (props) => {
+    function filter() {
+    }
+
+    return(
+        <input id="searchbar" onkeyup="filter()" type="text" name="search" placeholder="Search"></input>
     );
 }
 
@@ -60,7 +71,8 @@ const CalenderComponent = (props) => {
     );
 }
 
-export { CustomButton, Header, ClassButton, CalenderComponent, MainPageButtons };
+export { CustomButton, Header, ClassButton, CalenderComponent,MainPageButtons, SearchBar };
+
 
 
 
