@@ -1,4 +1,5 @@
 import React from 'react';
+import { NotesPage } from '../notes_page/notes_page';
 import { Header, CalenderComponent, MainPageButtons } from '../shared-components/shared-components';
 import { CalenderPage } from './calender-page';
 
@@ -18,14 +19,14 @@ export class MainClassPage extends React.Component {
         this.state = {
             className: props.mainTitle,
             classId: props.classId,
-            currentPage : Pages.CalenderPage
+            currentPage : Pages.NotesPage
         }
     }
 
     getCurrentPage(pageEnum) {
         switch (pageEnum) {
             case Pages.NotesPage :
-                return "";
+                return <NotesPage/>;
             break;
             case Pages.CalenderPage : 
                 return <CalenderPage/>;

@@ -16,8 +16,8 @@ const Header = (props) => {
             <h1>{props.title}</h1>
             <div className = "page-selection-section">
                 <MainPageButtons title = "Home" propRoute = '/'/>
-                <MainPageButtons title = "Notes" propRoute = '/notes'/>
-                <MainPageButtons title = "Class List"/>
+                <MainPageButtons title = "Notes" propRoute = '/course-center'/>
+                <MainPageButtons title = "Class List" propRoute = "/course-center"/>
                 <MainPageButtons title = "Account" propRoute = '/account'/>
                 <MainPageButtons title = "Log In" propRoute = "/login"/>
                 <MainPageButtons title = "Sign Up" propRoute = "/signup"/>

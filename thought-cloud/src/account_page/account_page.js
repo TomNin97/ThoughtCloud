@@ -33,6 +33,8 @@ export class DashBoard extends React.Component {
 
     onClassButtonClicked(className = "No class", classId) {
         alert(" Simulating going to class " + className.toString() + "with id: " + classId)
+
+        window.location = '/course-center';
     }
 
     getInputValueById(id) {
