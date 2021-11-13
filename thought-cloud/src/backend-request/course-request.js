@@ -8,6 +8,7 @@ const jsonHeader = {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization"
 }
+
 const baseUrl = "http://localhost:5000";
 
 /* Create new user if valid request */
@@ -31,6 +32,17 @@ export function Course(departmentID, courseID, courseSection, courseName, profes
         }
     };
 };
+
+export function ClassMember(id, firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.id = id;
+    this.getClassMemberMap = {
+        "firstName" : this.firstName,
+        "lastName" : this.lastName,
+        "id" : this.id
+    }
+}
 
 export default class CourseRequests {
 
@@ -78,7 +90,7 @@ export default class CourseRequests {
       return  await axios({
             method: 'get',
             headers: jsonHeader,
-            url: baseUrl + '/courses',
+            url: baseUrl + `/courses${}`,
             // data : JSON.stringify(postBody)
         }).then(res => {
 
@@ -119,5 +131,30 @@ export default class CourseRequests {
 
     async deleteUser() {
         
+    }
+
+    async getCourseMembers(courseId, authentication) {
+
+        var jsonData = {
+            "courseId" : courseId,
+            "authentication" : authentication
+        };
+
+
+       await  axios({
+            method : "post",
+            url : baseUrl + '/courseMembers',
+            data : JSON.stringify(jsonData),
+            headers : jsonHeader
+        }).then(response=> {
+            const data  = response.data;
+            console.log("Data is:");
+            console.table(data);
+            if (data != null)
+               return data.map(item=>ClassMember(item.id, item.lastName, item.firstName));
+            else {
+                return false;
+            }
+        })
     }
 }

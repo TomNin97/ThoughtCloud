@@ -22,6 +22,8 @@ module.exports = app => {
     /* remove a course by its primary key */
     app.delete("/courses/:departmentID-:courseID-:sectionID/delete", courses.removeCourse);
 
+
+    app.get("/courses")
     /* get a course by its primary key */
     app.get("/courses/:departmentID-:courseID-:sectionID/", courses.getCourseInfo);
 

@@ -39,13 +39,10 @@ export class MainClassPage extends React.Component {
         switch (pageEnum) {
             case Pages.NotesPage:
                 return <NotesPage />;
-                break;
             case Pages.CalenderPage:
                 return <CalenderPage />;
-                break;
             case Pages.ClassListPage:
                 return <ClassListPage />;
-                break;
             default:
                 return "";
         }
