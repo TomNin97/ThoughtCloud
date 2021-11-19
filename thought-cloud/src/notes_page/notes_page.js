@@ -1,8 +1,7 @@
 import React from 'react';
 import { Header, CalenderComponent, CustomButton, SearchBar } from '../shared-components/shared-components';
 import ImageRequests from '../backend-request/image-requests/image-request'
-
-
+import { Course } from '../backend-request/course-request';
 function NoteItem(props) {
 
     return (
@@ -59,7 +58,7 @@ export class NotesPage extends React.Component {
         this.state = {
             notes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
         }
-        this.imageRequests = new ImageRequests();
+        this.imageRequests = new ImageRequests(new Course("sdf","dd","234","Something","dfd", "sfdf"));
 
         this.VALID_NOTES_KEYS = [
             "posterID",
@@ -75,13 +74,20 @@ export class NotesPage extends React.Component {
 
 
     uploadNote = () => {
+
         const fileReader = new FileReader();
-        const file = document.getElementById("grabbed-file").files[0];
+        const element = document.getElementById("grabbed-file");
+        const file = element.files[0];
+        if(file == null) {
+            alert("Select a file");
+            return;
+        }
+
         fileReader.readAsArrayBuffer(file);
         var fileContent;
         fileReader.onloadend = () =>{
             fileContent = fileReader.result;
-            this.imageRequests.uploadFile("testingFile.jpg", fileContent);
+            this.imageRequests.uploadFile(file.name, fileContent);
             console.log('DONE', fileReader.result); 
 
             //pass to firebase storage
