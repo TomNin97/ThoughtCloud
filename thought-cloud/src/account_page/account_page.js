@@ -65,7 +65,7 @@ export class DashBoard extends React.Component {
                             this.getInputValueById("courseId"), 
                             this.getInputValueById("courseSection"), 
                             this.getInputValueById("courseName"), 
-                            "myId","assId");
+                            "assId");
 
 
                             if (isSuccess) {

@@ -49,8 +49,10 @@ export default class CourseRequests {
     constructor () {
         this.sessionItems = new SessionItems();
     }
-    async addCourse(departmentID, courseId, courseSection, courseName, professorID, assistantID) {
-        var newCourse = new Course(departmentID, courseId, courseSection, courseName, professorID, assistantID);
+    async addCourse(departmentID, courseId, courseSection, courseName, assistantID) {
+       const creatorID = this.sessionItems.getItem("ID");
+       
+        var newCourse = new Course(departmentID, courseId, courseSection, courseName, creatorID, assistantID);
 
         console.table(newCourse.getCourseMap());
 
@@ -80,17 +82,13 @@ export default class CourseRequests {
     //this is temporarily using a get all course
     async getUserCourses() {
 
-        const userId = this.sessionItems.getItem("id");
+        const userId = this.sessionItems.getItem("ID");
         const authenticationCode = "authCode";
-        const postBody = {
-            "userId": userId,
-            "authentication": authenticationCode
-        };
 
       return  await axios({
             method: 'get',
             headers: jsonHeader,
-            url: baseUrl + `/courses${}`,
+            url: baseUrl + `/${userId}/courses`,
             // data : JSON.stringify(postBody)
         }).then(res => {
 
@@ -125,36 +123,34 @@ export default class CourseRequests {
 
     }
 
-    async getClasslist() {
-
-    }
-
     async deleteUser() {
         
     }
 
-    async getCourseMembers(courseId, authentication) {
-
-        var jsonData = {
-            "courseId" : courseId,
-            "authentication" : authentication
-        };
-
-
+    //contentNeeded has to be - subtable name of a course
+    async getCourseContent(course, contentNeeded) {
        await  axios({
-            method : "post",
-            url : baseUrl + '/courseMembers',
-            data : JSON.stringify(jsonData),
+            method : "get",
+            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.sectionID}/${contentNeeded}`,
             headers : jsonHeader
         }).then(response=> {
             const data  = response.data;
             console.log("Data is:");
             console.table(data);
             if (data != null)
-               return data.map(item=>ClassMember(item.id, item.lastName, item.firstName));
+               return data;
             else {
                 return false;
             }
         })
+    }
+
+
+    async getClasslist(course) {
+
+        return (await this.getCourseContent(course, "classlist").catch(e=> {
+            console.log("error getting list", e);
+            return [];
+        })).map(item=> ClassMember(item.id, item.firstName, item.lastName));
     }
 }

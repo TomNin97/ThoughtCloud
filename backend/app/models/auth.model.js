@@ -28,7 +28,7 @@ const Auth = function (auth) {
 Auth.login = (userInfo, currentSession, result) =>{
     sql.query(`SELECT * FROM users WHERE email =  '${userInfo.email}' and password = '${userInfo.password}'`, (err, res) => {
         if (err || res.length == 0) {
-          console.log("error: ", err);
+          console.log("error getting db user: ", err);
           result(err, null);
           return;
         }
@@ -44,7 +44,7 @@ Auth.login = (userInfo, currentSession, result) =>{
         else{
             console.log("invalid username and/or password");
         }
-        result(null, res);   
+        result(err, res);   
       });
     };    
 

@@ -21,9 +21,9 @@ const Header = (props) => {
                 <MainPageButtons title="Home" propRoute='/' />
                 <MainPageButtons title="Account" propRoute='/account' />
 
-                {sessionItems.getItem("id") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
-                {sessionItems.getItem("id") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
-                {sessionItems.getItem("id") != null ? <MainPageButtons title="Sign Out" propRoute="/login" /> : null}
+                {sessionItems.getItem("ID") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
+                {sessionItems.getItem("ID") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
+                {sessionItems.getItem("ID") != null ? <MainPageButtons title="Sign Out" propRoute="/login" /> : null}
 
             </div>
             <br />

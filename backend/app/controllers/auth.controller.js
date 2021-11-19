@@ -30,7 +30,8 @@ exports.login = (req, res) => {
     /* catch errors */
     if (err)
       return res.status(500).send({
-        message: err.message ?? "Error when logining user",
+
+        message: err.message || "Error when logging in user",
       });
     /* otherwise send data */ else res.send(data); 
   });
