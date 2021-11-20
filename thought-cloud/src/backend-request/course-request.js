@@ -8,6 +8,7 @@ const jsonHeader = {
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization"
 }
+
 const baseUrl = "http://localhost:5000";
 
 /* Create new user if valid request */
@@ -32,13 +33,26 @@ export function Course(departmentID, courseID, courseSection, courseName, profes
     };
 };
 
+export function ClassMember(id, firstName, lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.id = id;
+    this.getClassMemberMap = {
+        "firstName" : this.firstName,
+        "lastName" : this.lastName,
+        "id" : this.id
+    }
+}
+
 export default class CourseRequests {
 
     constructor () {
         this.sessionItems = new SessionItems();
     }
-    async addCourse(departmentID, courseId, courseSection, courseName, professorID, assistantID) {
-        var newCourse = new Course(departmentID, courseId, courseSection, courseName, professorID, assistantID);
+    async addCourse(departmentID, courseId, courseSection, courseName, assistantID) {
+       const creatorID = this.sessionItems.getItem("ID");
+       
+        var newCourse = new Course(departmentID, courseId, courseSection, courseName, creatorID, assistantID);
 
         console.table(newCourse.getCourseMap());
 
@@ -68,17 +82,13 @@ export default class CourseRequests {
     //this is temporarily using a get all course
     async getUserCourses() {
 
-        const userId = this.sessionItems.getItem("id");
+        const userId = this.sessionItems.getItem("ID");
         const authenticationCode = "authCode";
-        const postBody = {
-            "userId": userId,
-            "authentication": authenticationCode
-        };
 
       return  await axios({
             method: 'get',
             headers: jsonHeader,
-            url: baseUrl + '/courses',
+            url: baseUrl + `/${userId}/courses`,
             // data : JSON.stringify(postBody)
         }).then(res => {
 
@@ -113,11 +123,34 @@ export default class CourseRequests {
 
     }
 
-    async getClasslist() {
-
-    }
-
     async deleteUser() {
         
+    }
+
+    //contentNeeded has to be - subtable name of a course
+    async getCourseContent(course, contentNeeded) {
+       await  axios({
+            method : "get",
+            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.sectionID}/${contentNeeded}`,
+            headers : jsonHeader
+        }).then(response=> {
+            const data  = response.data;
+            console.log("Data is:");
+            console.table(data);
+            if (data != null)
+               return data;
+            else {
+                return false;
+            }
+        })
+    }
+
+
+    async getClasslist(course) {
+
+        return (await this.getCourseContent(course, "classlist").catch(e=> {
+            console.log("error getting list", e);
+            return [];
+        })).map(item=> ClassMember(item.id, item.firstName, item.lastName));
     }
 }

@@ -37,7 +37,7 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[0] +
-    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL UNIQUE, lastName VARCHAR(45) NOT NULL UNIQUE, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE)";
+    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL, lastName VARCHAR(45) NOT NULL, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE)";
   var q3 =
     "CREATE TABLE " +
     courseInfo.departmentID +
@@ -52,13 +52,14 @@ function formQuery(courseInfo) {
     courseInfo.courseSection +
     TABLE_MODIFIER[2] +
     " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID))";
-
+  var q5 = "INSERT INTO masterlist SET ?";
   /* object to store formed queries */
   var queries = {
     q_insertCourse: q1,
     q_createClasslist: q2,
     q_createCalendar: q3,
     q_createNotes: q4,
+    q_insertMasterList: q5,
   };
 
   return queries;
@@ -84,6 +85,18 @@ Course.create = (newCourse, result) => {
           throw err;
         });
       }
+
+
+      const data = { "ID": newCourse.professorID, "departmentId": newCourse.departmentID, "courseID": newCourse.courseID, "sectionID": newCourse.courseSection };
+
+      console.log("Data being added to masterlist : ", data);
+      sql.query(sqlQueries.q_insertMasterList, data, (err, res3) => {
+        if (err) {
+          return sql.rollback(function () {
+            throw err;
+          });
+        }
+      });
 
       sql.query(sqlQueries.q_createClasslist, newCourse, (err, res2) => {
         if (err) {
@@ -134,9 +147,7 @@ Course.removeCourse = (req, result) => {
         return;
       }
 
-      console.log(
-        "Deleted " + `${res.affectedRows}` + " row from courses"
-      );
+      console.log("Deleted " + `${res.affectedRows}` + " row from courses");
       result(null, res);
     }
   );
@@ -154,9 +165,7 @@ Course.getCourseInfo = (req, result) => {
         return;
       }
 
-      console.log(
-        "Returned " + `${res.affectedRows}` + " row from courses"
-      );
+      console.log("Returned " + `${res.affectedRows}` + " row from courses");
       result(null, res);
     }
   );
@@ -222,18 +231,66 @@ Course.deleteAllSubtableContent = (dbTable, result) => {
   });
 };
 
-Course.postContent = (dbTable, assignment, result) => {
-var sqlQuery = "INSERT INTO " + dbTable + " SET " + assignment;
-sql.query(sqlQuery, (err, res) => {
-  if (err) {
-    console.log("error: ", err);
-    result(err, null);
-    return;
-  }
+Course.postContent = (masterInfo, dbTable, assignment, result) => {
+  var sqlQuery = "INSERT INTO " + dbTable + " SET " + assignment;
+  if (masterInfo.dest == "classlist") {
+    sql.beginTransaction(function (err) {
+      if (err) {
+        throw err;
+      }
+      sql.query(sqlQuery, (err, res1) => {
+        if (err) {
+          return sql.rollback(function () {
+            throw err;
+          });
+        }
 
-  console.log("Inserted " + `${res.affectedRows}` + " record into " + dbTable);
-  result(null, res);
-});
+        sql.query("INSERT INTO masterlist SET ID = ?, departmentID = ?, courseID = ?, sectionID = ?", [masterInfo.ID, masterInfo.departmentID, masterInfo.courseID, masterInfo.sectionID], (err, res2) => {
+          if (err) {
+            return sql.rollback(function () {
+              throw err;
+            });
+          }
+          sql.commit(function (err) {
+            result(null, "success");
+            if (err) {
+              return sql.rollback(function () {
+                throw err;
+              });
+            }
+            console.log("success!");
+          });
+        });
+      });
+    });
+  } else {
+    sql.query(sqlQuery, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+      console.log(
+        "Inserted " + `${res.affectedRows}` + " record into " + dbTable
+      );
+      result(null, res);
+    });
+  }
+};
+
+Course.getCourseMembership = (userID, result) => {
+  console.log(userID);
+  sql.query("SELECT departmentID, courseID, sectionID FROM masterlist WHERE ID = '" + userID + "'", (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+
+    console.log("found " + `${res.affectedRows}` + " matches");
+    result(null, res);
+  });
 };
 
 // Course.deleteRecord = () => {

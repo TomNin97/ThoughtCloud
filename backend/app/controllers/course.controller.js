@@ -63,7 +63,7 @@ function requestCheck(req) {
     VALID_KEYS = VALID_NOTES_KEYS;
   } else if (req.params.content == TABLE_MODIFIER[3]) {
     VALID_KEYS = VALID_CLASSLIST_KEYS;
-  /* abort if unrecognized request parameter */
+    /* abort if unrecognized request parameter */
   } else {
     console.log("Bad HTTP Request");
     return false;
@@ -103,17 +103,17 @@ function formQuery(req) {
   for (const prop in req.body) {
     //console.log(`${prop}`+ " = " + req.body[prop]);
     /* need to not encase nulls in the HTTP request in '' */
-    if(req.body[prop] == null)
+    if (req.body[prop] == null)
       query += (`${prop}` + " = " + req.body[prop]);
     else
       query += (`${prop}` + " = '" + req.body[prop] + "'");
     // https://stackoverflow.com/questions/6756104/get-size-of-json-object
-    if(i != Object.keys(req.body).length - 1){
+    if (i != Object.keys(req.body).length - 1) {
       query += ", ";
     }
     i++;
   }
-  return query; 
+  return query;
 }
 
 /* error handler to determine which parameter is the issue? */
@@ -243,13 +243,48 @@ exports.postContent = (req, res) => {
     req.params.courseID +
     req.params.sectionID +
     req.params.content;
-  Course.postContent(dbTable, formQuery(req), (err, data) => {
+
+  var masterInfo = {
+    ID: req.body.ID,
+    departmentID: req.params.departmentID,
+    courseID: req.params.courseID,
+    sectionID: req.params.sectionID,
+    dest: req.params.content
+  }
+
+  Course.postContent(masterInfo, dbTable, formQuery(req), (err, data) => {
     if (err)
       res.status(500).send({
         message: err.message || "Error when deleting data",
       });
     else res.send(data);
   });
+};
+
+/* find all the clases that a student is a member of */
+exports.getCourseMembership = (req, res) => {
+  var idToFInd = req.params.userID;
+  Course.getCourseMembership(idToFInd,
+    
+(err, data) => {
+  if (err) {
+    res.status(500).send({
+      message: err.message || "Error when finding user's courses",
+    });
+  }
+  else {
+    var courses = [];
+    sql.query(`SELECT * FROM courses WHERE courseID IN(${data.map(e => e.courseID).toList()})`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+    });
+
+  }
+})
 };
 
 // exports.deleteRecord = (req, res) => {
@@ -262,3 +297,22 @@ exports.postContent = (req, res) => {
 //   });
 // };
 
+(err, data) => {
+  if (err) {
+    res.status(500).send({
+      message: err.message || "Error when finding user's courses",
+    });
+  }
+  else {
+    var courses = [];
+    sql.query(`SELECT * FROM courses WHERE courseID IN(${data.map(e => e.courseID).toList()})`, (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
+
+    });
+
+  }
+}

@@ -22,6 +22,8 @@ module.exports = app => {
     /* remove a course by its primary key */
     app.delete("/courses/:departmentID-:courseID-:sectionID/delete", courses.removeCourse);
 
+
+    app.get("/courses")
     /* get a course by its primary key */
     app.get("/courses/:departmentID-:courseID-:sectionID/", courses.getCourseInfo);
 
@@ -41,6 +43,9 @@ module.exports = app => {
 
     /* post to a subtable using the desired path */
     app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
+
+    /* return all of the courses that a user is a part of IN PROGRESS */
+    app.get("/:userID/courses", courses.getCourseMembership);
 
     /* delete a record that you posted 
         HTTP REQUEST: 

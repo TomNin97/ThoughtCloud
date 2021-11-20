@@ -11,7 +11,7 @@ const jsonHeader = {
 }
 
 const  User = {
-    id: null,
+    ID: null,
     email : null,
     firstName : null ,
     lastName : null ,
@@ -103,7 +103,7 @@ export class UserRequests {
 
       return  await  axios({
             method : "post",
-            data : JSON.stringify(credentials),
+            data : credentials,
             headers : jsonHeader,
             url : baseUrl + "/login"
         }).then(result=> {

@@ -19,14 +19,11 @@ const Header = (props) => {
             <h1>{props.title}</h1>
             <div className="page-selection-section" style={{ display: "flex" }}>
                 <MainPageButtons title="Home" propRoute='/' />
-                <MainPageButtons title="Notes" propRoute='/course-center' />
-                <MainPageButtons title="Calender" propRoute='/course-center' />
-                <MainPageButtons title="Class List" propRoute="/course-center" />
                 <MainPageButtons title="Account" propRoute='/account' />
 
-                {sessionItems.getItem("id") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
-                {sessionItems.getItem("id") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
-                {sessionItems.getItem("id") != null ? <MainPageButtons title="Sign Out" propRoute="/login" /> : null}
+                {sessionItems.getItem("ID") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
+                {sessionItems.getItem("ID") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
+                {sessionItems.getItem("ID") != null ? <MainPageButtons title="Sign Out" propRoute="/login" /> : null}
 
             </div>
             <br />
