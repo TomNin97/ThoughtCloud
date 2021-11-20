@@ -103,7 +103,7 @@ export default class ImageRequests {
     generateCurrentDate(hasSeconds = false) {
         const date = new Date();
 
-        return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + `${hasSeconds ? ('-' + date.getSeconds()) : ''}`;
+       return  date.getFullYear() + '-' + (date.getMonth() + 1 )+'-' + date.getDate() + `${hasSeconds ?  ('' + date.getHours() + ":" + date.getMinutes() + ':' + date.getSeconds()) : ''}`;
 
     }
 
