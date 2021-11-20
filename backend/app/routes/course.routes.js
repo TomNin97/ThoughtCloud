@@ -42,7 +42,7 @@ module.exports = app => {
     app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/all", courses.deleteAllSubtableContent);
 
     /* post to a subtable using the desired path */
-    app.post("/courses/:departmentID-:courseID-:sectionID/:content/post", courses.postContent);
+    app.post("/courses/:departmentID-:courseID-:sectionID/:content/", courses.postContent);
 
     /* return all of the courses that a user is a part of IN PROGRESS */
     app.get("/:userID/courses", courses.getCourseMembership);
@@ -55,7 +55,7 @@ module.exports = app => {
             "posterID" : "ID_OF_ORIGINAL_POSTER"
         }
     */
-    //app.delete("/courses/:departmentID-:courseID-:sectionID/:content/:contentID/:action", courses.deleteRecordRegular);
+    app.delete("/courses/:departmentID-:courseID-:sectionID/:content/", courses.deleteRecord);
 
     /* delete any record */
     //app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/", courses.deleteRecordAdmin);

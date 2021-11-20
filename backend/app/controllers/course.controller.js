@@ -28,11 +28,7 @@ const VALID_COURSE_KEYS = [
   "professorID",
   "assistantID",
 ];
-const VALID_CLASSLIST_KEYS = [
-  "ID",
-  "firstName",
-  "lastName"
-];
+const VALID_CLASSLIST_KEYS = ["ID", "firstName", "lastName"];
 const VALID_CALENDAR_KEYS = [
   "posterID",
   "eventDate",
@@ -41,8 +37,10 @@ const VALID_CALENDAR_KEYS = [
   "eventTitle",
   "description",
 ];
+// change content link to file name
 const VALID_NOTES_KEYS = [
   "posterID",
+  "postID",
   "uploadDT",
   "dateTaken",
   "format",
@@ -103,10 +101,8 @@ function formQuery(req) {
   for (const prop in req.body) {
     //console.log(`${prop}`+ " = " + req.body[prop]);
     /* need to not encase nulls in the HTTP request in '' */
-    if (req.body[prop] == null)
-      query += (`${prop}` + " = " + req.body[prop]);
-    else
-      query += (`${prop}` + " = '" + req.body[prop] + "'");
+    if (req.body[prop] == null) query += `${prop}` + " = " + req.body[prop];
+    else query += `${prop}` + " = '" + req.body[prop] + "'";
     // https://stackoverflow.com/questions/6756104/get-size-of-json-object
     if (i != Object.keys(req.body).length - 1) {
       query += ", ";
@@ -249,8 +245,8 @@ exports.postContent = (req, res) => {
     departmentID: req.params.departmentID,
     courseID: req.params.courseID,
     sectionID: req.params.sectionID,
-    dest: req.params.content
-  }
+    dest: req.params.content,
+  };
 
   Course.postContent(masterInfo, dbTable, formQuery(req), (err, data) => {
     if (err)
@@ -264,55 +260,39 @@ exports.postContent = (req, res) => {
 /* find all the clases that a student is a member of */
 exports.getCourseMembership = (req, res) => {
   var idToFInd = req.params.userID;
-  Course.getCourseMembership(idToFInd,
-    
-(err, data) => {
-  if (err) {
-    res.status(500).send({
-      message: err.message || "Error when finding user's courses",
-    });
-  }
-  else {
-    var courses = [];
-    sql.query(`SELECT * FROM courses WHERE courseID IN(${data.map(e => e.courseID).toList()})`, (err, res) => {
+  Course.getCourseMembership(
+    idToFInd,
+
+    (err, data) => {
       if (err) {
-        console.log("error: ", err);
-        result(err, null);
-        return;
+        res.status(500).send({
+          message: err.message || "Error when finding user's courses",
+        });
+      } else {
+        var courses = [];
+        sql.query(
+          `SELECT * FROM courses WHERE courseID IN(${data
+            .map((e) => e.courseID)
+            .toList()})`,
+          (err, res) => {
+            if (err) {
+              console.log("error: ", err);
+              result(err, null);
+              return;
+            }
+          }
+        );
       }
-
-    });
-
-  }
-})
+    }
+  );
 };
 
-// exports.deleteRecord = (req, res) => {
-//   Course.deleteRecord((err, data) => {
-//     if (err)
-//       res.status(500).send({
-//         message: err.message || "Error when removing record",
-//       });
-//     else res.send({ message: "record successfully removed" });
-//   });
-// };
-
-(err, data) => {
-  if (err) {
-    res.status(500).send({
-      message: err.message || "Error when finding user's courses",
-    });
-  }
-  else {
-    var courses = [];
-    sql.query(`SELECT * FROM courses WHERE courseID IN(${data.map(e => e.courseID).toList()})`, (err, res) => {
-      if (err) {
-        console.log("error: ", err);
-        result(err, null);
-        return;
-      }
-
-    });
-
-  }
-}
+exports.deleteRecord = (req, res) => {
+  Course.deleteRecord(req, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Error when removing record",
+      });
+    else res.send({ message: "record successfully removed" });
+  });
+};

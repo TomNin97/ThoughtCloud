@@ -65,6 +65,13 @@ function formQuery(courseInfo) {
   return queries;
 }
 
+/* function to form deletion queries */
+function deleteQueryGen(reqData){
+  var tableName = reqData.body.tableName;
+  if(tableName === "notes" || "Notes")
+    return "DELETE FROM " + `${reqData.params.departmentID}` + `${reqData.params.courseID}` + `${reqData.params.sectionID}`+ "notes WHERE contentLink = '" + `${reqData.body.fileName}` + "'";
+}
+
 /* Create a new course */
 Course.create = (newCourse, result) => {
   var sqlQueries = formQuery(newCourse);
@@ -281,7 +288,9 @@ Course.postContent = (masterInfo, dbTable, assignment, result) => {
 
 Course.getCourseMembership = (userID, result) => {
   console.log(userID);
-  sql.query("SELECT departmentID, courseID, sectionID FROM masterlist WHERE ID = '" + userID + "'", (err, res) => {
+  // SELECT * FROM courses NATURAL JOIN (SELECT courseID, departmentID, SectionID FROM masterlist WHERE ID = '" + userID + "'") AS t)
+  //sql.query("SELECT departmentID, courseID, sectionID FROM masterlist WHERE ID = '" + userID + "'", (err, res) => {
+  sql.query("SELECT * FROM courses NATURAL JOIN (SELECT * FROM masterlist WHERE ID = '" + userID + "') AS t)", (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -293,9 +302,18 @@ Course.getCourseMembership = (userID, result) => {
   });
 };
 
-// Course.deleteRecord = () => {
-
-// };
+Course.deleteRecord = (reqData, result) => {
+  var sqlQuery = deleteQueryGen(reqData);
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("deleted " + `${res.affectedRows}` + " rows");
+    result(null, res);
+  });
+};
 
 //TO DO
 /*
