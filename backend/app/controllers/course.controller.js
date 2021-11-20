@@ -260,32 +260,22 @@ exports.postContent = (req, res) => {
 /* find all the clases that a student is a member of */
 exports.getCourseMembership = (req, res) => {
   var idToFInd = req.params.userID;
-  Course.getCourseMembership(
-    idToFInd,
+  
+  Course.getCourseMembership(idToFInd,
 
     (err, data) => {
       if (err) {
         res.status(500).send({
           message: err.message || "Error when finding user's courses",
         });
-      } else {
-        var courses = [];
-        sql.query(
-          `SELECT * FROM courses WHERE courseID IN(${data
-            .map((e) => e.courseID)
-            .toList()})`,
-          (err, res) => {
-            if (err) {
-              console.log("error: ", err);
-              result(err, null);
-              return;
-            }
-          }
-        );
       }
-    }
-  );
+      else {
+        res.send(data);
+
+      }
+    })
 };
+
 
 exports.deleteRecord = (req, res) => {
   Course.deleteRecord(req, (err, data) => {

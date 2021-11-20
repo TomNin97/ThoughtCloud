@@ -1,5 +1,6 @@
+import axios from "axios";
 import { initializeApp } from "firebase/app";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from "firebase/storage";
 import { Course } from "../course-request";
 import { SessionItems } from "../session-items";
 const fs = require('fs');
@@ -9,7 +10,7 @@ var admin = require("firebase-admin");
 var serviceAccount = require("../../thought-cloud-cf6ac-ee8a591439a5.json");
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount)
 });
 
 // Set the configuration for your app
@@ -24,62 +25,124 @@ const firebaseConfig = {
     appId: "1:1065084476547:web:4aa79a0aa6585d00138fb6"
 };
 
+const baseUrl = "http://localhost:5000";
+
+///todo: duplicate code;
+const jsonHeader = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization"
+}
+
 const firebaseApp = initializeApp(firebaseConfig);
 function Note(posterId, uploadDate, dateTaken, format, contentLink, hidden, hideEnd, hideStart) {
-  return {
-        "posterId" : posterId,
-        "uploadDate" : uploadDate,
-        "dateTaken" : dateTaken,
-        "format" : format,
-        "contentLink" : contentLink,
-        "hidden" : hidden,
-        "hideEnd" : hideEnd,
-        "hideStart" : hideStart
+    return {
+        "posterId": posterId,
+        "uploadDate": uploadDate,
+        "dateTaken": dateTaken,
+        "format": format,
+        "contentLink": contentLink,
+        "hidden": hidden,
+        "hideEnd": hideEnd,
+        "hideStart": hideStart
     }
 }
 
 export default class ImageRequests {
     constructor(course) {
         // Create a root reference
-        this.storage =getStorage(firebaseApp);
+        this.storage = getStorage(firebaseApp);
         this.course = course;
         this.sessionItems = new SessionItems();
     }
 
     async uploadFile(fileName, file, dateTaken) {
         //create Note object
-        
-         //Create a reference to 'mountains.jpg'
+
+        //Create a reference to 'mountains.jpg'
         const timeStampedName = `${Date.now()}${fileName}`;
         const name = `${this.course.departmentID}${this.course.courseID}${this.course.courseSection}/${timeStampedName}`;
         const newNoteRef = ref(this.storage, name);
 
-        await uploadBytes(newNoteRef, file).then((snapshot) => {
+        await uploadBytes(newNoteRef, file).then(async (snapshot) => {
             console.log('Uploaded a blob or file!', snapshot);
             //send request to backend with filename and course info
-            const newNote = {...Note(this.sessionItems.getItem("userID"),this.generateCurrentDate(), dateTaken,fileName.substring(fileName.lastIndexOf('.'), fileName.length),timeStampedName,false) }
+            const newNote = { ...Note(this.sessionItems.getItem("userID"), this.generateCurrentDate(), dateTaken, fileName.substring(fileName.lastIndexOf('.'), fileName.length), timeStampedName, false) }
 
             //send request 
-        }).catch(e=> {
+
+            await axios({
+                method: "post",
+                data: JSON.stringify(newNote),
+                headers: jsonHeader,
+                url: baseUrl + `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/notes`,
+            }).then(response => {
+                if (response.status == 200) {
+                    const data = response.data;
+                    console.log("Data is:");
+                    console.table(data);
+                    if (data != null) {
+                        alert("Note uploaded? : ", data);
+                        return data;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    alert("Note upload error : ", response.statusText);
+                }
+            })
+        }).catch(e => {
             console.log("Error uploading", e);
         });
     }
 
 
-    generateCurrentDate( hasSeconds = false) {
+    generateCurrentDate(hasSeconds = false) {
         const date = new Date();
 
        return  date.getFullYear() + '-' + (date.getMonth() + 1 )+'-' + date.getDate() + `${hasSeconds ?  ('' + date.getHours() + ":" + date.getMinutes() + ':' + date.getSeconds()) : ''}`;
 
     }
 
+
+    async deleteNote(note = Note()) {
+        const filePath = (await this.getFileUrl(note.contentLink));
+        if (filePath != null) {
+            const noteRef = ref(this.storage, filePath);
+            await deleteObject(noteRef);
+
+            //delete from database
+              await   axios({
+                    method : "delete",
+                    data : JSON.stringify({"fileName" : note.contentLink, "tableName" : "notes"}),
+                    url : baseUrl + `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/notes`,
+                    headers : jsonHeader
+                }).then(response => {
+                    if (response.status == 200) {
+                        const data = response.data;
+                        console.log("Data is:");
+                        console.table(data);
+                            alert("Note deleted ");
+                    }
+                    else {
+                        alert("Note delete error : ", response.statusText);
+                    }
+                })
+        }
+    }
+
     async getFileUrl(name) {
-        if(name != null && name != ""){
-         return  await  getDownloadURL(name);
+        if (name != null && name != "") {
+            return await getDownloadURL(name);
         }
 
         throw "EmptyFileRefrence"
     }
+
+
 }
 
 

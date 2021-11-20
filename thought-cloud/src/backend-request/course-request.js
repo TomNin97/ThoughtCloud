@@ -12,11 +12,11 @@ const jsonHeader = {
 const baseUrl = "http://localhost:5000";
 
 /* Create new user if valid request */
-export function Course(departmentID, courseID, courseSection, courseName, professorId, assistantId) {
+export function Course(departmentID, courseID, sectionID, courseName, professorId, assistantId) {
 
     this.departmentID = departmentID;
     this.courseID = courseID;
-    this.courseSection = courseSection;
+    this.sectionID = sectionID;
     this.courseName = courseName;
     this.professorID = professorId;
     this.assistantID = assistantId;
@@ -25,7 +25,7 @@ export function Course(departmentID, courseID, courseSection, courseName, profes
             "courseID": this.courseID,
             "departmentID": this.departmentID,
             "courseID": this.courseID,
-            "courseSection": this.courseSection,
+            "sectionID": this.sectionID,
             "courseName": this.courseName,
             "professorID": this.professorID,
             "assistantID": this.assistantID,
@@ -49,10 +49,10 @@ export default class CourseRequests {
     constructor () {
         this.sessionItems = new SessionItems();
     }
-    async addCourse(departmentID, courseId, courseSection, courseName, assistantID) {
+    async addCourse(departmentID, courseId, sectionID, courseName, assistantID) {
        const creatorID = this.sessionItems.getItem("ID");
        
-        var newCourse = new Course(departmentID, courseId, courseSection, courseName, creatorID, assistantID);
+        var newCourse = new Course(departmentID, courseId, sectionID, courseName, creatorID, assistantID);
 
         console.table(newCourse.getCourseMap());
 
@@ -98,7 +98,7 @@ export default class CourseRequests {
 
                 console.log(data.departmentID);
                 var allCourses = data.map(e => {
-                    var course = new Course(e.departmentID, e.courseID, e.courseSection, e.courseName, e.professorID, e.assistantID);
+                    var course = new Course(e.departmentID, e.courseID, e.sectionID, e.courseName, e.professorID, e.assistantID);
                     return course.getCourseMap();
                 });
                 console.log("Data is", allCourses);
@@ -129,6 +129,8 @@ export default class CourseRequests {
 
     //contentNeeded has to be - subtable name of a course
     async getCourseContent(course, contentNeeded) {
+      
+        console.table(course);
        await  axios({
             method : "get",
             url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.sectionID}/${contentNeeded}`,
