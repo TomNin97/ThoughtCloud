@@ -4,6 +4,7 @@ import Popup from 'reactjs-popup';
 import 'reactjs-popup/dist/index.css';
 import { Course } from '../backend-request/course-request';
 import CourseRequests from '../backend-request/course-request';
+import { AppState } from '../app_state.js';
 export class DashBoard extends React.Component {
 
 
@@ -15,7 +16,8 @@ export class DashBoard extends React.Component {
         this.state = {
             isTeacher: props.isTeacher,
             classes : [],
-            courseRequest : new CourseRequests()
+            courseRequest : new CourseRequests(),
+            appState : props.appState
         }
 
 
@@ -31,9 +33,12 @@ export class DashBoard extends React.Component {
 
     }
 
-    onClassButtonClicked(className = "No class", classId) {
-        alert(" Simulating going to class " + className.toString() + "with id: " + classId)
+    onClassButtonClicked(course, classId) {
+        alert(" Simulating going to class " + course.toString() + "with id: " + classId)
 
+        this.state.appState.currentCourse = course;
+        console.log("New course added is:")
+        console.table(this.state.appState.currentCourse);
         window.location = '/course-center';
     }
 

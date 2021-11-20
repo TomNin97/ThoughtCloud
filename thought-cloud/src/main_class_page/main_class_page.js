@@ -24,10 +24,13 @@ export class MainClassPage extends React.Component {
 
     constructor(props) {
         super(props);
+        console.log("Appstate in course content :");
+        console.table(props.appState.currentCourse);
         this.state = {
             className: props.mainTitle,
             classId: props.classId,
-            currentPage: Pages.ClassListPage
+            currentPage: Pages.ClassListPage,
+            appState : props.appState
         }
     }
 
@@ -42,9 +45,9 @@ export class MainClassPage extends React.Component {
             case Pages.CalenderPage:
                 return <CalenderPage />;
             case Pages.ClassListPage:
-                return <ClassListPage />;
+                return <ClassListPage course = {this.state.appState.currentCourse}/>;
             default:
-                return "";
+                return <NotesPage />;
         }
     }
 

@@ -23,7 +23,8 @@ export class ClassListPage extends React.Component {
         }
 
         this.courseRequests = new CourseRequests();
-
+            console.log("Course is ");
+            console.table(this.state.course);
         this.courseRequests.getClasslist(this.state.course).then ((value)=>{
             this.setState({"classList" : value});
         })
