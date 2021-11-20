@@ -40,11 +40,11 @@ export class SignUpPage extends React.Component {
     signUp = async () => {
         console.log("Siging up 29");
         var id = this.getIdFromEmail(this.state.email);
-        console.log("ID is " + id);
+        alert("ID is " + id);
         if (id != null) {
             this.setState({ "userId": id });
 
-            const isSuccess = await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student", this.state.userId);
+            const isSuccess = await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student",id);
             if (isSuccess) {
                 console.log("sucesssfully created account");
                 window.location ='/dashboard';

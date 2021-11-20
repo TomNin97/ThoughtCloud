@@ -63,7 +63,11 @@ export class UserRequests {
         console.log("Creatingn user 13");
 
         this.user.setUser(id, email,firstName, lastName,accountType,)
-
+        const data =this.user.getUserMap();
+        for(const item in data) {
+            console.log("item:" + item + data[`${item}`]);
+            this.sessionItems.setItem(`${item}`, data[`${item}`]);
+        }
         console.table (this.user.getUserMap());
 
 

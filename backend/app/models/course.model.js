@@ -281,7 +281,7 @@ Course.postContent = (masterInfo, dbTable, assignment, result) => {
 
 Course.getCourseMembership = (userID, result) => {
   console.log(userID);
-  sql.query("SELECT departmentID, courseID, sectionID FROM masterlist WHERE ID = '" + userID + "'", (err, res) => {
+  sql.query("SELECT * FROM  courses natural join (select courseID, departmentID, sectionID  from masterlist where ID = ? ) AS rand", userID,(err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
@@ -293,6 +293,7 @@ Course.getCourseMembership = (userID, result) => {
   });
 };
 
+//Select * from  JOIN Course AND (SELECT departmentID, courseID, sectionID FROM masterlist WHERE ID) AS query ON  Course.departmentID = query
 // Course.deleteRecord = () => {
 
 // };

@@ -117,7 +117,7 @@ export default class ImageRequests {
             //delete from database
               await   axios({
                     method : "delete",
-                    data : JSON.stringify({"notes" : note.contentLink}),
+                    data : JSON.stringify({"fileName" : note.contentLink, "tableName" : "notes"}),
                     url : baseUrl + `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/notes`,
                     headers : jsonHeader
                 }).then(response => {

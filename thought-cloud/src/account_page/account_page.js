@@ -88,14 +88,14 @@ export class DashBoard extends React.Component {
     render() {
         return (
             <div>
-                < Header title={!this.state.isTeacher ? "Teacher DashBoard" : "Student DashBoard"} />
+                < Header title={ "DashBoard" } />
                 <div className="subsection-title">
                     {this.showNewCourseForm()}
-                    <h2>Owned Classes</h2>
+                    <h2>Classes</h2>
                 </div>
                 <div className="avaialble-class-list">
                     <ul>
-                        {this.state.classes != null ? this.state.classes.map(classItem => <ClassButton title={classItem.courseName} onClick={() => this.onClassButtonClicked(classItem, 0) 
+                        {this.state.classes.length != 0 ? this.state.classes.map(classItem => <ClassButton title={classItem.courseName} onClick={() => this.onClassButtonClicked(classItem, 0) 
                         } />) : "No Classes yet"}
                     </ul>
                 </div>
