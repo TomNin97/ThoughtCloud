@@ -25,7 +25,7 @@ export function Course(departmentID, courseID, sectionID, courseName, professorI
             "courseID": this.courseID,
             "departmentID": this.departmentID,
             "courseID": this.courseID,
-            "sectionID": this.sectionID,
+            "courseSection": this.sectionID,
             "courseName": this.courseName,
             "professorID": this.professorID,
             "assistantID": this.assistantID,
@@ -52,7 +52,7 @@ export default class CourseRequests {
     async addCourse(departmentID, courseId, sectionID, courseName, assistantID) {
        const creatorID = this.sessionItems.getItem("ID");
        
-        var newCourse = new Course(departmentID, courseId, sectionID, courseName, creatorID, assistantID);
+    var newCourse = new Course(departmentID, courseId, sectionID, courseName, creatorID, assistantID);
 
         console.table(newCourse.getCourseMap());
 
@@ -131,9 +131,9 @@ export default class CourseRequests {
     async getCourseContent(course, contentNeeded) {
       
         console.table(course);
-       await  axios({
+      return await  axios({
             method : "get",
-            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.sectionID}/${contentNeeded}`,
+            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/${contentNeeded}`,
             headers : jsonHeader
         }).then(response=> {
             const data  = response.data;
@@ -142,7 +142,7 @@ export default class CourseRequests {
             if (data != null)
                return data;
             else {
-                return false;
+                return [];
             }
         })
     }

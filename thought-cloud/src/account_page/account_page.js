@@ -1,10 +1,12 @@
 import React from 'react';
 import { CustomButton, Header, ClassButton } from '../shared-components/shared-components.js';
 import Popup from 'reactjs-popup';
+
 import 'reactjs-popup/dist/index.css';
 import { Course } from '../backend-request/course-request';
 import CourseRequests from '../backend-request/course-request';
 import { AppState } from '../app_state.js';
+import { Redirect } from 'react-router-dom';
 export class DashBoard extends React.Component {
 
 
@@ -17,29 +19,30 @@ export class DashBoard extends React.Component {
             isTeacher: props.isTeacher,
             classes : [],
             courseRequest : new CourseRequests(),
-            appState : props.appState
+            appState : props.appState,
+            updateAppState : props.onStateUpdate,
+            redirect : false
         }
 
+        this.getCourses();
+        
+    }
 
-        this.state.courseRequest.getUserCourses().then(
-           
+    async getCourses() {
+       await  this.state.courseRequest.getUserCourses().then(
             value => {
                 console.log("Data gotten from req is ",value )
                 this.setState({"classes" : value});
                 console.log("here",this.state.classes);
             }
         )
-
-
     }
 
     onClassButtonClicked(course, classId) {
         alert(" Simulating going to class " + course.toString() + "with id: " + classId)
 
-        this.state.appState.currentCourse = course;
-        console.log("New course added is:")
-        console.table(this.state.appState.currentCourse);
-        window.location = '/course-center';
+        this.state.appState.course =course;
+        this.setState({redirect : true})
     }
 
     getInputValueById(id) {
@@ -75,11 +78,12 @@ export class DashBoard extends React.Component {
 
                             if (isSuccess) {
                                 console.log("Successsssss");
+                                
                             }
                             else {
                                 console.log("Failure")
                             }
-
+                            this.getCourses();
                             alert(isSuccess);
                         }
                     } />
@@ -91,6 +95,12 @@ export class DashBoard extends React.Component {
 
 
     render() {
+
+        if(this.state.redirect) {
+            return (
+                <Redirect to="/course-center"/>
+            )
+        }
         return (
             <div>
                 < Header title={ "DashBoard" } />

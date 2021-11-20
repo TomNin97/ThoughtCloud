@@ -38,7 +38,7 @@ export class ClassListPage extends React.Component {
             <div className="classlist-page-wrapper">
                 {
                     <div style={{ display: "flex", flexDirection : "column", justifyContent :"center", alignItems : "center" }}>
-                    { this.state.classList.map(e => <MemberItem member={{"name" :e}} /> )}
+                    {this.state.classList.length != 0 ?  this.state.classList.map(e => <MemberItem member={{"name" :e}} /> ) : "No Members Yet"}
 
                     </div>
                 }
