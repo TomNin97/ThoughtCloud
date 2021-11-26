@@ -41,9 +41,9 @@ export class MainClassPage extends React.Component {
     getCurrentPage(pageEnum) {
         switch (pageEnum) {
             case Pages.NotesPage:
-                return <NotesPage />;
+                return <NotesPage  course = {this.state.appState.currentCourse}/>;
             case Pages.CalenderPage:
-                return <CalenderPage />;
+                return <CalenderPage course = {this.state.appState.currentCourse} />;
             case Pages.ClassListPage:
                 return <ClassListPage course = {this.state.appState.currentCourse}/>;
             default:

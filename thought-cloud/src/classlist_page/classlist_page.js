@@ -63,7 +63,7 @@ function AddMemberModal(props) {
 
     return (
 
-        <div id="member-modal" className="add-member-modal" hidden >
+        <div id="member-modal" className="add-member-modal" hidden = {true} >
             <h2>New Member </h2>
             <span>
                 <input id="member-search" type="text" />

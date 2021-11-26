@@ -176,4 +176,21 @@ export default class CourseRequests {
             return false;
         })
     }
+
+
+    async getNotes(course) {
+
+
+        return await axios({
+            method : "get",
+            headers : jsonHeader,
+            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/notes/`
+        }).then(result=> {
+            const data = result.data;
+
+            if(data != null) {
+                
+            }
+        })
+    }
 }

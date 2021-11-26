@@ -38,8 +38,8 @@ const jsonHeader = {
 const firebaseApp = initializeApp(firebaseConfig);
 function Note(posterId, uploadDate, dateTaken, format, contentLink, hidden, hideEnd, hideStart) {
     return {
-        "posterId": posterId,
-        "uploadDate": uploadDate,
+        "posterID": posterId,
+        "uploadDT": uploadDate,
         "dateTaken": dateTaken,
         "format": format,
         "contentLink": contentLink,
@@ -68,7 +68,7 @@ export default class ImageRequests {
         await uploadBytes(newNoteRef, file).then(async (snapshot) => {
             console.log('Uploaded a blob or file!', snapshot);
             //send request to backend with filename and course info
-            const newNote = { ...Note(this.sessionItems.getItem("userID"), this.generateCurrentDate(), dateTaken, fileName.substring(fileName.lastIndexOf('.'), fileName.length), timeStampedName, false) }
+            const newNote = Note(this.sessionItems.getItem("ID"), this.generateCurrentDate(), dateTaken, fileName.substring(fileName.lastIndexOf('.'), fileName.length), timeStampedName, 0)
 
             //send request 
 
@@ -136,10 +136,33 @@ export default class ImageRequests {
 
     async getFileUrl(name) {
         if (name != null && name != "") {
-            return await getDownloadURL(name);
+            const fileStringRef =this.course.departmentID + this.course.courseID + this.course.courseSection + "/" +name;
+          console.log("String ref: ", `${fileStringRef}`);
+            return await getDownloadURL(ref(this.storage,`${fileStringRef}`));
         }
 
         throw "EmptyFileRefrence"
+    }
+
+
+    async getCourseNotes() {
+
+        return await axios ({
+            method : "get",
+            headers : jsonHeader,
+            url : baseUrl + `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/notes`,
+        }).then(async result =>{
+            const data = result.data;
+            if(data != null) {
+                for( var i =0; i < data.length; i++) {
+                    data[i].contentLink =  await this.getFileUrl(data[i].contentLink)
+                }
+                
+                 return data;
+            }
+
+            return [];
+        })
     }
 
 

@@ -2,13 +2,53 @@ import React from 'react';
 import { Header, CalenderComponent, CustomButton, SearchBar } from '../shared-components/shared-components';
 import ImageRequests from '../backend-request/image-requests/image-request'
 import { Course } from '../backend-request/course-request';
+import "../notes_page/notes-page.css";
+import { ImageCarousel } from './carousel_page';
+
+
+
+
+
+function ShowModal(props) {
+
+    const closeModal = () => {
+        console.log("closing modal", props.note.postID);
+        const modal = document.getElementById(`image-modal-wrapper${props.note.postID}`);
+        modal.hidden = true;
+        console.log(modal);
+
+    }
+    return (
+        <div id={`image-modal-wrapper${props.note.postID}`} className="image-view-modal" hidden >
+            <div className = "dialog-wrapper">
+                
+                <div className="mod-wrapper">
+
+                   <span> <h1>Post by {props.note.posterID}</h1></span>
+                    <img src={props.note.contentLink} />
+                    <button onClick={closeModal}>Close</button>
+                </div>
+               
+            </div>
+
+        </div>
+    )
+}
+
 function NoteItem(props) {
 
     return (
-        <div className="note-item-wrapper" style={{ margin: "5px 5px 0px 5px" }}>
-            <img src={props.url} />
-            <h1>{props.text}</h1>
+        <div>
+            <ShowModal key={props.note} note={props.note} />
 
+            <div onClick={() => {
+                document.getElementById(`image-modal-wrapper${props.note.postID}`).hidden = false;
+            }} className="note-item-wrapper" style={{ margin: "5px 5px 0px 5px" }}>
+                <img src={props.note.contentLink} />
+                <h1>{props.text}</h1>
+
+
+            </div>
         </div>
     );
 }
@@ -56,20 +96,17 @@ export class NotesPage extends React.Component {
 
         //temp notes
         this.state = {
-            notes: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+            notes: [],
+            course: props.course
         }
-        this.imageRequests = new ImageRequests(new Course("sdf","dd","234","Something","dfd", "sfdf"));
+        this.imageRequests = new ImageRequests(props.course);
 
-        this.VALID_NOTES_KEYS = [
-            "posterID",
-            "uploadID",
-            "dateTaken",
-            "format",
-            "contentLink",
-            "hidden",
-            "hideStart",
-            "hideEnd",
-        ];
+        this.imageRequests.getCourseNotes().then(data => {
+            if (data != null) {
+                console.table(data);
+                this.setState({ notes: data });
+            }
+        })
     };
 
 
@@ -78,20 +115,27 @@ export class NotesPage extends React.Component {
         const fileReader = new FileReader();
         const element = document.getElementById("grabbed-file");
         const file = element.files[0];
-        if(file == null) {
+        if (file == null) {
             alert("Select a file");
             return;
         }
 
         fileReader.readAsArrayBuffer(file);
         var fileContent;
-        fileReader.onloadend = () =>{
+        fileReader.onloadend = () => {
             fileContent = fileReader.result;
-            this.imageRequests.uploadFile(file.name, fileContent);
-            console.log('DONE', fileReader.result); 
+            this.imageRequests.uploadFile(file.name, fileContent).then(e=> {
+                this.imageRequests.getCourseNotes().then(data => {
+                    if (data != null) {
+                        console.table(data);
+                        this.setState({ notes: data });
+                    }
+                })
+            });
+            console.log('DONE', fileReader.result);
 
             //pass to firebase storage
-          };
+        };
 
     }
 
@@ -102,13 +146,17 @@ export class NotesPage extends React.Component {
         return (
             <div className="notes-page-wrapper" style={{ display: "flex", flexWrap: "true", width: "100vw" }}>
                 <div className="upload-button">
-                    <input type="file" id="grabbed-file" accept = "image/png, image/jpeg"/>
-                
+                    <input type="file" id="grabbed-file" accept="image/png, image/jpeg," />
+
                     <button onClick={this.uploadNote}>
                         Upload New Note
                     </button>
                 </div>
-                {this.state.notes.map(e => <NoteItem url="https://picsum.photos/200/300" text={e} />)}
+                <div id="notes-thumbnails">
+                    {this.state.notes.map(e => <NoteItem note={e} />)}
+                </div>
+
+                {/* {<ImageCarousel notes = {this.state.notes}/>} */}
             </div>
         );
 
@@ -125,5 +173,8 @@ export class NotesPage extends React.Component {
             </div>
         );
 
+
+
     }
 }
+
