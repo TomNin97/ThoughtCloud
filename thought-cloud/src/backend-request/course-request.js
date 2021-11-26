@@ -34,13 +34,10 @@ export function Course(departmentID, courseID, sectionID, courseName, professorI
 };
 
 export function ClassMember(id, firstName, lastName) {
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.id = id;
-    this.getClassMemberMap = {
-        "firstName" : this.firstName,
-        "lastName" : this.lastName,
-        "id" : this.id
+    return  {
+        "firstName" : firstName,
+        "lastName" : lastName,
+        "id" : id
     }
 }
 
@@ -154,5 +151,29 @@ export default class CourseRequests {
             console.log("error getting list", e);
             return [];
         })).map(item=> ClassMember(item.id, item.firstName, item.lastName));
+    }
+
+
+    async addUserToClass(id, firstName, lastName, course) {
+
+
+        const data = {
+            "ID" : id,
+            "firstName" : firstName,
+            "lastName" : lastName
+        }
+
+
+       return await axios({
+            method : "post",
+            data : data,
+            headers : jsonHeader,
+            url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/classlist/`
+        }).then(result=>{
+            if(result.status == 200) {
+                return true;
+            }
+            return false;
+        })
     }
 }

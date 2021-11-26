@@ -62,7 +62,7 @@ export class NotesPage extends React.Component {
 
         this.VALID_NOTES_KEYS = [
             "posterID",
-            "uploadDT",
+            "uploadID",
             "dateTaken",
             "format",
             "contentLink",
