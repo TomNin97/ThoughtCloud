@@ -1,0 +1,76 @@
+
+.note-item-wrapper {
+    height: 20vh;
+    width: 15vw;
+}
+
+.note-item-wrapper >img {
+    height: 17vh;
+    width: 13vw;
+}
+
+#notes-thumbnails {
+    display: grid;
+   width: 100vw;
+    grid-template-columns: repeat(auto-fit, minmax(300px , 1fr));
+    grid-gap: 10px;
+}
+
+
+
+.image-view-modal {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+   
+}
+
+
+.dialog-wrapper {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: row;
+   background-color: red;
+    justify-content: center;
+    align-content: center;
+}
+
+.mod-wrapper {
+   
+    background-color: black;
+    max-width: 60vw ;
+    
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: auto auto;
+
+}
+
+.mod-wrapper span {
+    height: 50px;
+    background-color: green;
+
+}
+
+.mod-wrapper span h1 {
+    font-size: larger;
+    text-align: center;
+
+}
+
+.mod-wrapper img {
+    max-width: 40vw;
+    max-height: 50vh;
+}
+
+.mod-wrapper button {
+    height: 30px;
+    width: 70px;
+    bottom: 0;
+    margin:  auto auto;
+}
+
