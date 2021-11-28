@@ -36,7 +36,7 @@ const jsonHeader = {
 }
 
 const firebaseApp = initializeApp(firebaseConfig);
-function Note(posterId, uploadDate, dateTaken, format, contentLink, hidden, hideEnd, hideStart) {
+function Note(posterId, uploadDate, dateTaken, format, contentLink, hidden,tags, noteTitle, hideEnd, hideStart ) {
     return {
         "posterID": posterId,
         "uploadDT": uploadDate,
@@ -45,7 +45,9 @@ function Note(posterId, uploadDate, dateTaken, format, contentLink, hidden, hide
         "contentLink": contentLink,
         "hidden": hidden,
         "hideEnd": hideEnd,
-        "hideStart": hideStart
+        "hideStart": hideStart,
+        "noteTags" : tags,
+        "noteTitle" : noteTitle
     }
 }
 
@@ -57,7 +59,7 @@ export default class ImageRequests {
         this.sessionItems = new SessionItems();
     }
 
-    async uploadFile(fileName, file, dateTaken) {
+    async uploadFile(fileName, file, dateTaken, noteTitle, tags) {
         //create Note object
 
         //Create a reference to 'mountains.jpg'
@@ -68,7 +70,7 @@ export default class ImageRequests {
         await uploadBytes(newNoteRef, file).then(async (snapshot) => {
             console.log('Uploaded a blob or file!', snapshot);
             //send request to backend with filename and course info
-            const newNote = Note(this.sessionItems.getItem("ID"), this.generateCurrentDate(), dateTaken, fileName.substring(fileName.lastIndexOf('.'), fileName.length), timeStampedName, 0)
+            const newNote = Note(this.sessionItems.getItem("ID"), this.generateCurrentDate(), this.generateCurrentDate(), fileName.substring(fileName.lastIndexOf('.'), fileName.length), timeStampedName, 0,tags, noteTitle)
 
             //send request 
 

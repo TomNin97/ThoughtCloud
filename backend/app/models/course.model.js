@@ -51,7 +51,7 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[2] +
-    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID))";
+    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID), noteTitle VARCHAR(30), noteTags VARCHAR(200))";
   var q5 = "INSERT INTO masterlist SET ?";
   /* object to store formed queries */
   var queries = {

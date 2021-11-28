@@ -1,13 +1,32 @@
 
 .note-item-wrapper {
+    position: relative;
     height: 20vh;
     width: 20vh;
     margin: 4px;
+    border : 2px solid black;
+}
+
+.note-item-wrapper:hover {
+    transform: scale(1.1);
+    
 }
 
 .note-item-wrapper >img {
-    max-height: 17vh;
-    max-width: 17vh;
+    max-height: 20vh;
+    max-width: 20vh;
+}
+
+.note-item-wrapper >h1 {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: 0;
+    background-color: #d4e09ba2;
+    height: 35px;
+    font-size: 15px;
+    word-wrap: break-word;
 }
 
 #notes-thumbnails {
@@ -17,51 +36,42 @@
     grid-gap: 10px;
 }
 
-
-
 .image-view-modal {
     position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
-   
+    z-index: 3;
 }
-
 
 .dialog-wrapper {
     width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: row;
-   
    background-color: rgba(155, 153, 153, 0.4);
     justify-content: center;
     align-content: center;
 }
 
 .mod-wrapper {
-   
     background-color: black;
     max-width: 60vw ;
-    
     max-height: 70vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
     margin: auto auto;
-
 }
 
 .mod-wrapper div {
     height: 50px;
     background-color: green;
-
 }
 
 .mod-wrapper div h1 {
     font-size: larger;
     text-align: center;
-
 }
 
 .mod-wrapper img {
@@ -76,14 +86,13 @@
     margin:  auto auto;
 }
 
-
 #add-note-modal {
     position: absolute;
     top: 0;
     width: 100vw;
     height: 100vh;
     background-color: rgba(82, 95, 82, 0.726);
-
+    z-index: 3;
 }
 
 .note-dialog-wrapper {
@@ -91,7 +100,6 @@
     flex-direction: column;
     justify-content: center;
     align-content: center;
-
 }
 
 .note-mod-wrapper {
@@ -100,8 +108,8 @@
     justify-content: space-evenly;
     align-content: space-between;
     background-color: #d4e09b;
-    width: 60vw;
-    height: 50vh;
+    width: 40vw;
+    height: 35vh;
     margin: auto auto;
 }
 
@@ -110,9 +118,16 @@
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    margin: 30px;
+    margin: auto auto;
 }
 
-.note-form input {
-    width: 70px;
+#grabbed-file::file-selector-button {
+    border: none;
+    margin: 5px;
+    height: 40px;
+    border-radius: 5px;
 }
+
+
+
+

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Header, CalenderComponent, CustomButton, SearchBar } from '../shared-components/shared-components';
 import ImageRequests from '../backend-request/image-requests/image-request'
 import { Course } from '../backend-request/course-request';
@@ -8,7 +8,7 @@ import { ImageCarousel } from './carousel_page';
 
 
 function AddNoteModal(props) {
-
+    const imageRequests = props.imageRequests;
     const closeModal = () => {
         console.log("closing modal");
         const modal = document.getElementById("add-note-modal");
@@ -16,6 +16,9 @@ function AddNoteModal(props) {
         console.log(modal);
 
     }
+
+    const [noteTitle, setTitle] = useState("");
+    const [noteTags, setTags] = useState();
 
     const uploadNote = () => {
 
@@ -31,21 +34,17 @@ function AddNoteModal(props) {
         var fileContent;
         fileReader.onloadend = () => {
             fileContent = fileReader.result;
-            this.imageRequests.uploadFile(file.name, fileContent).then(e => {
-                this.imageRequests.getCourseNotes().then(data => {
+            imageRequests.uploadFile(file.name, fileContent,Date.now(0), noteTitle, noteTags ).then(e => {
+                imageRequests.getCourseNotes().then(data => {
                     if (data != null) {
                         console.table(data);
-                        this.setState({ notes: data });
+                        props.setState({ "notes": data });
                     }
                 })
             });
             console.log('DONE', fileReader.result);
-
-            //pass to firebase storage
         };
-
     }
-
     return (
         <div id="add-note-modal" hidden >
             <div className="note-dialog-wrapper">
@@ -56,22 +55,17 @@ function AddNoteModal(props) {
                     </div>
 
                     <div className="note-form">
-                        <label>Note Title</label>
-                        <input name="titel" type="text" />
-                        <label>Description</label>
-                        <textarea></textarea>
+                        <label>Week Taken</label>
+                        <input name="title"  value = {noteTitle} required onChange = {(val)=> setTitle(val.target.value)} type="number" min = {1} />
                         <label>Tags</label>
-                        <input name="tags" type="text" />
-
-                        <div className="upload-button">
-                            <input type="file" id="grabbed-file" accept="image/png, image/jpeg, application/pdf" />
-
+                        <input name="tags" value = {noteTags} onChange = {(val)=> setTags(val.target.value)} type="text" placeholder= "use commas to separate multiple tags" />
+                        <input type="file" id="grabbed-file"  required accept="image/png, image/jpeg, application/pdf" />
+                        <div className="upload-buttons">
                             <button onClick={uploadNote}>
                                 Upload New Note
                             </button>
                         </div>
                     </div>
-
 
                     <button onClick={closeModal}>Close</button>
                 </div>
@@ -119,7 +113,7 @@ function NoteItem(props) {
                 document.getElementById(`image-modal-wrapper${props.note.postID}`).hidden = false;
             }} className="note-item-wrapper" style={{ margin: "5px 5px 0px 5px" }}>
                 <img src={props.note.contentLink} />
-                <h1>{props.text}</h1>
+                <h1>{"Week:" + (props.note.noteTitle!= null ? props.note.noteTitle : "1")}</h1>
             </div>
         </div>
     );
@@ -154,7 +148,7 @@ export class NotesPage extends React.Component {
         return (
             <div className="notes-page-wrapper" style={{ display: "flex", flexWrap: "true", width: "100vw" }}>
 
-                <AddNoteModal />
+                <AddNoteModal  imageRequests = {this.imageRequests} setState = {this.setState}/>
                <button id ="add-note-button" onClick = {
                    ()=> {
                     const modal = document.getElementById("add-note-modal") ;

@@ -48,6 +48,8 @@ const VALID_NOTES_KEYS = [
   "hidden",
   "hideStart",
   "hideEnd",
+  "noteTags",
+  "noteTitle"
 ];
 
 function requestCheck(req) {
