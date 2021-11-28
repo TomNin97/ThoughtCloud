@@ -11,10 +11,17 @@ export class CalenderPage extends React.Component {
             courseRequests : new CourseRequests(),
             events : []
         }
-
-        this.state.courseRequests.getEvents(props.course).then(e=>{
+        
+        this.getEvents(this.state.course);
+        
+    }
+    getEvents = (course) =>{
+        this.state.courseRequests.getEvents(course).then(e=>{
             this.setState({"events" :e });
         })
+
+
+   
     }
 
 
@@ -23,10 +30,17 @@ export class CalenderPage extends React.Component {
 
             <div className="page-wrapper">
 
-                <AddEventModal courseRequests={this.state.courseRequests} course={this.state.course} />
+                <AddEventModal  reloadEvents = {this.getEvents} courseRequests={this.state.courseRequests} course={this.state.course} />
                 <div className="subtitle-section">
                     <h2>Calender</h2>
-                    <CustomButton title="Add Event" />
+                    <CustomButton title="Add Event"  onClick = {
+                         function onDateClick() {
+                            console.log("Opening modal");
+                            const modal =  document.getElementById("add-event-modal");
+                            
+                           modal.hidden = false;
+                        }
+                    }/>
                 </div>
                 <div className="calender-wrapper">
                     <CalenderComponent  events = {this.state.events}/>

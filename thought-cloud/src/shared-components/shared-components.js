@@ -19,9 +19,9 @@ const Header = (props) => {
     return (
         <div className="header-wrapper">
 
-            <h1>{props.title}</h1>
+            <h1 className = "header-title">{props.title}</h1>
             <div className="page-selection-section" style={{ display: "flex" }}>
-                <MainPageButtons title="Home" propRoute='/' />
+                <MainPageButtons title="Home" propRoute='/dashboard' />
                 <MainPageButtons title="Account" propRoute='/account' />
 
                 {sessionItems.getItem("ID") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
@@ -65,15 +65,14 @@ const Cal = (props) => {
     function onDateClick(arg) {
         console.log("CLickeddd");
         console.table(arg);
-        document.getElementById("add-event-modal").hidden = false;
+        const modal =  document.getElementById("add-event-modal");
+        
+       modal.hidden = false;
     }
 
-        console.log("events are",props.events);
 
     return (
         <div>
-            
-
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
@@ -93,8 +92,6 @@ const Cal = (props) => {
 }
 
 const CalenderComponent = (props) => {
-    const [value, onChange] = useState(new Date());
-
     return (
         <div className="calender-plugin-wrapper">
             <Cal events={props.events}  />
@@ -105,7 +102,6 @@ const CalenderComponent = (props) => {
 
 function AddEventModal(props) {
 
-    const [result, setState] = useState([])
     const [title, setTitle] = useState();
     const [description, setDescription] = useState();
     const [dateTime, setDate] = useState()
@@ -116,6 +112,8 @@ function AddEventModal(props) {
        const result = await  props.courseRequests.addEvent(title, description, dateTime, props.course);
        if(result) {
            alert("success!");
+           closeModal();
+           props.reloadEvents(props.course);
        }
        else {
            alert("An error occured");
@@ -134,11 +132,11 @@ function AddEventModal(props) {
         <div id="add-event-modal" className="event-modal" hidden={true} >
             <div>
                 <div>
-                    <h2>Add Event </h2>
+                    <h2>Add New Event </h2>
                     <label>Event Title</label>
                     <input id = "event-title" type="text"  required value = {title} onChange= {(value) => setTitle(value.target.value)} name="eventTitle" />
-                    <label>Description</label>
-                    <textarea id = "event-description" type="text"  value = {description}  onChange= {e=> setDescription(e.target.value)} line-height= "50px" name="eventDescription" />
+                    {/* <label>Description</label>
+                    <textarea id = "event-description" type="text"  value = {description}  onChange= {e=> setDescription(e.target.value)} line-height= "50px" name="eventDescription" /> */}
                     <label>Date</label>
                     <input id = "event-date"  value = {dateTime} onChange = {(value)=>{
                         console.log(typeof(value.target.value));

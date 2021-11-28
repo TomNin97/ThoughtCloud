@@ -12,7 +12,7 @@
 #notes-thumbnails {
     display: grid;
    width: 100vw;
-    grid-template-columns: repeat(auto-fit, minmax(300px , 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(150px , 1fr));
     grid-gap: 10px;
 }
 

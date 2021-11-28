@@ -3,13 +3,13 @@ import { ClassListPage } from '../classlist_page/classlist_page';
 import { NotesPage } from '../notes_page/notes_page';
 import { Header, CalenderComponent, MainPageButtons } from '../shared-components/shared-components';
 import { CalenderPage } from './calender-page/calender-page';
-
+import "../main_class_page/main-class-page.css";
 
 //enums for identifying pages
 
 function SubPageButton(props) {
     return (
-        <div>
+        <div className = "navigation-button">
             <button onClick = {props.onTap}>{props.title}</button>
         </div>
     )

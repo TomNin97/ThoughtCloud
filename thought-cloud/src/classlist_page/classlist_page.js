@@ -11,8 +11,8 @@ const courseRequests = new CourseRequests();
 function MemberItem(props) {
 
     return (
-        <div className="member-item" style={{ display: "flex", backgroundColor: "brown", margin: "5px", border: "2 solid", width: "80vw" }}>
-            <div style={{ width: "77vw" }}>
+        <div className="member-item" >
+            <div className = "name-wrapper">
                 <h1>{props.member.name}</h1>
             </div>
             <button>Remove</button>

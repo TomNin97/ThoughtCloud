@@ -58,9 +58,14 @@ export default class CourseRequests {
     constructor() {
         this.sessionItems = new SessionItems();
     }
+
     async addCourse(departmentID, courseId, sectionID, courseName, assistantID) {
         const creatorID = this.sessionItems.getItem("ID");
 
+        if(departmentID == ""||  courseId == "" ||  sectionID == "" || courseName ==  ""  || assistantID == "" )
+        { 
+            return false;
+        }
         var newCourse = new Course(departmentID, courseId, sectionID, courseName, creatorID, assistantID);
 
         console.table(newCourse.getCourseMap());

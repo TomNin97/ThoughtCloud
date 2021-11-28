@@ -1,5 +1,51 @@
 
 
+.header-wrapper {
+    top: 0;
+    height:20vh;
+    width: 100vw;
+    background-color: #a1c181;
+   border-bottom: 1px solid black;
+   box-shadow: 5px grey ;
+   margin-bottom: 5px;
+   margin-top: 0;
+}
+
+
+.header-title {
+    font-size: 50px;
+    margin-top: 0px;
+    padding-top: 5vh;
+    padding-left: auto;
+    padding-right: auto;
+}
+
+.page-selection-section {
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content:flex-end;
+    padding-right: 10px;
+}
+
+.page-selection-section .button-wrapper {
+   padding: 0 5px;
+}
+
+.page-selection-section .button-wrapper  button {
+    height: 40px;
+    width: 90px;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 2px grey;
+    font-size: 20px;
+}
+
+.page-selection-section .button-wrapper  button:hover {
+    color: white;
+    background-color: black;
+    
+}
 
 
 #add-event-modal {
@@ -9,11 +55,17 @@
     height: 100vh;
     top: 0;
     bottom: 0;
+    padding: auto auto;
+   margin-left: 20vw;
+   margin-right: 20vw;
+   margin-top: 20vh;
+
 }
 
 #add-event-modal > div{
+    min-height: 40vh;
+    max-height: 60vh;
     width: 40vw;
-    height: 40vh;
     margin-left: 10vw;
     margin-right: 10vw;
     margin-top: 10vh;
@@ -29,7 +81,8 @@
 
 #add-event-modal > div > div{
     width: 30vw;
-    height: 40vh;
+    min-height: 40vh;
+    max-height: 60vh;
     background-color:bisque;
     margin-left: auto;
     margin-right: auto;
@@ -42,6 +95,9 @@
     height: 90px;
 }
 
+#add-event-modal > div > div #event-date {
+    height: 50px;
+}
 #add-event-modal button {
     width: 150px;
     height: 50px;
@@ -50,4 +106,58 @@
 
 
 
+.class-button-wrapper {
+    height: fit-content;
+    width: fit-content;
+    margin: 20px;
+}
 
+.class-button-wrapper button {
+    height: 300px;
+    width: 300px;
+    font-size: 50px;
+    border : none;
+}
+
+.class-button-wrapper button:hover {
+    transform: scale(1.1);
+    background-color: #d4e09b;
+}
+
+.modal-wrapper {
+    position: absolute;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+}
+
+
+.new-class-modal {
+    margin: 20vh auto;
+    padding: 10px;
+    min-height: 40vh;
+    max-height: 40vh;
+    
+    width: 40vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    background-color: #f6f4d2;
+}
+
+.new-class-modal input {
+    width: 20vw;
+    margin:  auto auto;
+}
+
+.buttons-wrapper {
+    display: flex;
+    margin: 5px;
+    flex-wrap: wrap;
+}
+.new-class-modal button {
+    width: 20vw;
+    margin:  auto auto;
+    width: 10vw;
+}
