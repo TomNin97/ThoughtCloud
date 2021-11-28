@@ -34,22 +34,34 @@ export function Course(departmentID, courseID, sectionID, courseName, professorI
 };
 
 export function ClassMember(id, firstName, lastName) {
-    return  {
-        "firstName" : firstName,
-        "lastName" : lastName,
-        "id" : id
+    return {
+        "firstName": firstName,
+        "lastName": lastName,
+        "id": id
     }
 }
 
+
+
+export function Event(title, description, date, time, posterID) {
+    return {
+        "posterID": posterID,
+        "eventDate": date,
+        "startTime": time,
+        "endTime": time,
+        "eventTitle": title,
+        "description": description,
+    };
+}
 export default class CourseRequests {
 
-    constructor () {
+    constructor() {
         this.sessionItems = new SessionItems();
     }
     async addCourse(departmentID, courseId, sectionID, courseName, assistantID) {
-       const creatorID = this.sessionItems.getItem("ID");
-       
-    var newCourse = new Course(departmentID, courseId, sectionID, courseName, creatorID, assistantID);
+        const creatorID = this.sessionItems.getItem("ID");
+
+        var newCourse = new Course(departmentID, courseId, sectionID, courseName, creatorID, assistantID);
 
         console.table(newCourse.getCourseMap());
 
@@ -82,7 +94,7 @@ export default class CourseRequests {
         const userId = this.sessionItems.getItem("ID");
         const authenticationCode = "authCode";
 
-      return  await axios({
+        return await axios({
             method: 'get',
             headers: jsonHeader,
             url: baseUrl + `/${userId}/courses`,
@@ -110,34 +122,34 @@ export default class CourseRequests {
 
         const userId = this.sessionItems.getItem("id");
 
-        if(userId === course.professorID) {
+        if (userId === course.professorID) {
             axios({
-                method : "delete",
-                headers : jsonHeader,
-                url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-:${course.sectionID}/:content/delete/alls`
+                method: "delete",
+                headers: jsonHeader,
+                url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-:${course.sectionID}/:content/delete/alls`
             })
         }
 
     }
 
     async deleteUser() {
-        
+
     }
 
     //contentNeeded has to be - subtable name of a course
     async getCourseContent(course, contentNeeded) {
-      
+
         console.table(course);
-      return await  axios({
-            method : "get",
-            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/${contentNeeded}`,
-            headers : jsonHeader
-        }).then(response=> {
-            const data  = response.data;
+        return await axios({
+            method: "get",
+            url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/${contentNeeded}`,
+            headers: jsonHeader
+        }).then(response => {
+            const data = response.data;
             console.log("Data is:");
             console.table(data);
             if (data != null)
-               return data;
+                return data;
             else {
                 return [];
             }
@@ -147,10 +159,10 @@ export default class CourseRequests {
 
     async getClasslist(course) {
 
-        return (await this.getCourseContent(course, "classlist").catch(e=> {
+        return (await this.getCourseContent(course, "classlist").catch(e => {
             console.log("error getting list", e);
             return [];
-        })).map(item=> ClassMember(item.id, item.firstName, item.lastName));
+        })).map(item => ClassMember(item.id, item.firstName, item.lastName));
     }
 
 
@@ -158,19 +170,19 @@ export default class CourseRequests {
 
 
         const data = {
-            "ID" : id,
-            "firstName" : firstName,
-            "lastName" : lastName
+            "ID": id,
+            "firstName": firstName,
+            "lastName": lastName
         }
 
 
-       return await axios({
-            method : "post",
-            data : data,
-            headers : jsonHeader,
+        return await axios({
+            method: "post",
+            data: data,
+            headers: jsonHeader,
             url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/classlist/`
-        }).then(result=>{
-            if(result.status == 200) {
+        }).then(result => {
+            if (result.status == 200) {
                 return true;
             }
             return false;
@@ -182,15 +194,49 @@ export default class CourseRequests {
 
 
         return await axios({
-            method : "get",
-            headers : jsonHeader,
-            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/notes/`
-        }).then(result=> {
+            method: "get",
+            headers: jsonHeader,
+            url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/notes/`
+        }).then(result => {
             const data = result.data;
 
-            if(data != null) {
-                
+            if (data != null) {
+
             }
+        })
+    }
+
+
+    async addEvent(title, description, dateTime, course) {
+        if (title == null || dateTime == null) {
+            alert("Make sure youve added a date and title");
+            return;
+        }
+
+        const date = dateTime.substring(0, dateTime.search("T"));
+        const time = dateTime.substring(dateTime.search("T")+1, dateTime.length) + ":00";
+        const newEvent = Event(title, description ?? "",date,time, this.sessionItems.getItem("ID"), );
+
+            console.log("course is :");
+            console.table(course);
+        return await axios({
+            method : "post",
+            headers : jsonHeader,
+            data : JSON.stringify(newEvent),
+            url : baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/calendar/`
+        }).then(e=> {
+
+            if(e.status == 200) {
+                return true;
+            }
+            else {
+                console.log(e.statusText);
+                return false;
+            }
+            
+        }).catch(e=> {
+            console.log("Error", e);
+            return false;
         })
     }
 }

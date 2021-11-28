@@ -24,7 +24,7 @@ function ShowModal(props) {
                 
                 <div className="mod-wrapper">
 
-                   <span> <h1>Post by {props.note.posterID}</h1></span>
+                   <span> <h1>Note by {props.note.posterID}</h1></span>
                     <img src={props.note.contentLink} />
                     <button onClick={closeModal}>Close</button>
                 </div>
@@ -46,8 +46,6 @@ function NoteItem(props) {
             }} className="note-item-wrapper" style={{ margin: "5px 5px 0px 5px" }}>
                 <img src={props.note.contentLink} />
                 <h1>{props.text}</h1>
-
-
             </div>
         </div>
     );
@@ -146,7 +144,7 @@ export class NotesPage extends React.Component {
         return (
             <div className="notes-page-wrapper" style={{ display: "flex", flexWrap: "true", width: "100vw" }}>
                 <div className="upload-button">
-                    <input type="file" id="grabbed-file" accept="image/png, image/jpeg," />
+                    <input type="file" id="grabbed-file" accept="image/png, image/jpeg, application/pdf" />
 
                     <button onClick={this.uploadNote}>
                         Upload New Note

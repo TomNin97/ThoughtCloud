@@ -32,7 +32,8 @@
     height: 100vh;
     display: flex;
     flex-direction: row;
-   background-color: red;
+   
+   background-color: rgba(155, 153, 153, 0.4);
     justify-content: center;
     align-content: center;
 }
@@ -63,8 +64,8 @@
 }
 
 .mod-wrapper img {
-    max-width: 40vw;
-    max-height: 50vh;
+    max-width: 60vw;
+    max-height: 80vh;
 }
 
 .mod-wrapper button {

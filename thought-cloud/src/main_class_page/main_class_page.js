@@ -2,7 +2,7 @@ import React from 'react';
 import { ClassListPage } from '../classlist_page/classlist_page';
 import { NotesPage } from '../notes_page/notes_page';
 import { Header, CalenderComponent, MainPageButtons } from '../shared-components/shared-components';
-import { CalenderPage } from './calender-page';
+import { CalenderPage } from './calender-page/calender-page';
 
 
 //enums for identifying pages
@@ -29,7 +29,7 @@ export class MainClassPage extends React.Component {
         this.state = {
             className: props.mainTitle,
             classId: props.classId,
-            currentPage: Pages.ClassListPage,
+            currentPage: Pages.NotesPage,
             appState : props.appState
         }
     }
