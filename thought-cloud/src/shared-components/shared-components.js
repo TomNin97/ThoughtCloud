@@ -77,8 +77,6 @@ const Cal = (props) => {
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView="dayGridMonth"
                 events={[
-                    { title: 'Final Exam', date: '2021-11-01' },
-                    { title: 'Project Due', date: '2021-11-02' },
                    ...props.events.map(e => {
                         return { title: e.eventTitle, date: e.eventDate }
                     }) ?? []

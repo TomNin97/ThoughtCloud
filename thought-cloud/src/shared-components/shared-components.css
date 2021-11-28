@@ -129,11 +129,12 @@
     top: 0;
     width: 100vw;
     height: 100vh;
+    background-color: rgba(175, 170, 170, 0.342);
 }
 
 
 .new-class-modal {
-    margin: 20vh auto;
+    margin: 22vh auto;
     padding: 10px;
     min-height: 40vh;
     max-height: 40vh;
