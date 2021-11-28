@@ -8,8 +8,13 @@ export class CalenderPage extends React.Component {
         super(props);
         this.state = {
             course: props.course,
-            courseRequests : new CourseRequests()
+            courseRequests : new CourseRequests(),
+            events : []
         }
+
+        this.state.courseRequests.getEvents(props.course).then(e=>{
+            this.setState({"events" :e });
+        })
     }
 
 
@@ -24,7 +29,7 @@ export class CalenderPage extends React.Component {
                     <CustomButton title="Add Event" />
                 </div>
                 <div className="calender-wrapper">
-                    <CalenderComponent />
+                    <CalenderComponent  events = {this.state.events}/>
                 </div>
             </div>
         );

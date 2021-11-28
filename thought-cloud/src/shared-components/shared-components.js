@@ -67,6 +67,9 @@ const Cal = (props) => {
         console.table(arg);
         document.getElementById("add-event-modal").hidden = false;
     }
+
+        console.log("events are",props.events);
+
     return (
         <div>
             
@@ -77,9 +80,9 @@ const Cal = (props) => {
                 events={[
                     { title: 'Final Exam', date: '2021-11-01' },
                     { title: 'Project Due', date: '2021-11-02' },
-                    props.events != null ? props.events.map(e => {
+                   ...props.events.map(e => {
                         return { title: e.eventTitle, date: e.eventDate }
-                    }) : []
+                    }) ?? []
 
                 ]}
                 dateClick={onDateClick}

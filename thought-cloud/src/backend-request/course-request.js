@@ -239,4 +239,14 @@ export default class CourseRequests {
             return false;
         })
     }
+
+    async getEvents(course) {
+        return (await this.getCourseContent(course, "calendar").catch(e => {
+            console.log("error getting list", e);
+            return [];
+        })).map(item => { 
+            console.log("Event is axios ",item );
+            return Event(item.eventTitle, item.description, item.eventDate, item.startTime, item.posterID); });
+    }
+    
 }

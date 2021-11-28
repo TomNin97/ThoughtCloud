@@ -113,6 +113,10 @@ export class UserRequests {
         }).then(result => {
             if (result.status == 200) {
                 const data = result.data;
+                console.log("login data is :", data);
+                if(data == null || data == "") {
+                    return false;
+                }
                 console.log("data is:");
                 console.log(data);
                 for (const item in data[0]) {
