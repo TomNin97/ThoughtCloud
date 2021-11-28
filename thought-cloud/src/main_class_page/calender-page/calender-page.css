@@ -1,0 +1,12 @@
+
+
+
+.calender-wrapper {
+    width: 80vw;
+
+    display: flex;
+    flex-direction: column;
+    align-content: space-around;
+    justify-content: center;
+    margin: auto auto;
+}
