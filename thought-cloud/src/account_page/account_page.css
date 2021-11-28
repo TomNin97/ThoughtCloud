@@ -1,0 +1,21 @@
+.subsection-title h2 {
+    font-size: 35px;
+    background-color: #f6f4d2;
+    margin: 20px 40vw;
+    box-shadow:2px 2px #e7e7e0 ;
+}
+
+.divider {
+    background-color: black;
+    height: 2px;
+}
+
+.available-class-list {
+    max-height: 200vh;
+    width: 100vw;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+    align-content: space-around;
+}

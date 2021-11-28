@@ -1,0 +1,19 @@
+.navigation-button {
+   margin: 20px 5px;
+   height: 70px;
+}
+
+.navigation-button button {
+    border : none;
+    box-shadow: 2px 2px  #c27441;;
+    background-color: #f19c79;
+    height: 60px;
+    width: 30vw;
+    font-size: 25px;
+    border-radius: 10px;
+}
+
+.navigation-button button:hover {
+    color: white
+}
+
