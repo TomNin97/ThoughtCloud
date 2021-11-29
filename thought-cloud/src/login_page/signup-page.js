@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { UserRequests } from '../backend-request/user-request';
-
+import "../login_page/login-page.css";
 
 
 export class SignUpPage extends React.Component {
@@ -11,9 +11,9 @@ export class SignUpPage extends React.Component {
 
         this.state = {
             userId: props.id ?? "",
-            firstName: props.firstName ?? "Mike",
+            firstName: props.firstName ?? "" ,
             lastName: props.lastName ?? "",
-            accountType: props.accountType ?? "student",
+            accountType: props.accountType ?? "",
             email: props.email ?? "",
             password: props.password ?? "",
             isLoggedIn: props.isLoggedIn ?? false
@@ -44,10 +44,10 @@ export class SignUpPage extends React.Component {
         if (id != null) {
             this.setState({ "userId": id });
 
-            const isSuccess = await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student",id);
+            const isSuccess = await this.userRequests.createUser(this.state.firstName, this.state.lastName, this.state.email, this.state.password, "student", id);
             if (isSuccess) {
                 console.log("sucesssfully created account");
-                window.location ='/dashboard';
+                window.location = '/dashboard';
             }
             else {
                 alert("Could not sign you up, try again! ");
@@ -64,34 +64,22 @@ export class SignUpPage extends React.Component {
     render() {
         //email & password input
         return (
-            <div>
-                <div className="login-page-header">
-                    <h1>ThoughtCloud</h1>
+            <div className="entry-body">
+                <div className="entry-page-header">
+                    <h1>#thoughtCloud</h1>
                 </div>
                 <div className="login-form">
-                    <label>First name</label>
-                    <input type="text" required value={this.state.firstName} onChange={(content) => this.handleChange("firstName", content)} /><br />
-
-                    <label>Last name</label>
-                    <input type="text" required value={this.state.lastName} onChange={(content) => this.handleChange("lastName", content)} /><br />
-
-                    <label>Account Type</label>
-                    <input type="text" required value={this.state.accountType} onChange={(content) => this.handleChange("accountType", content)} /><br />
-
-                    <label>email</label>
-                    <input type="email" required value={this.state.email} onChange={(content) => this.handleChange("email", content)} /><br />
-                    <label>password</label>
-                    <input type="password" required value={this.state.password} onChange={(content) => this.handleChange("password", content)} /><br />
+                <h2>SIGN UP</h2>
+                    <input type="text" placeholder="First name" required value={this.state.firstName} onChange={(content) => this.handleChange("firstName", content)} />
+                    <input type="text" placeholder="Last name" required value={this.state.lastName} onChange={(content) => this.handleChange("lastName", content)} />
+                    <input type="text" placeholder="Account Type" required value={this.state.accountType} onChange={(content) => this.handleChange("accountType", content)} />
+                    <input type="email" placeholder="email" required value={this.state.email} onChange={(content) => this.handleChange("email", content)} />
+                    <input type="password" placeholder="password" required value={this.state.password} onChange={(content) => this.handleChange("password", content)} /><br />
                     {/* This will be activated if the sign up button is clicked */}
 
-                    <div>
-                        <div className="sign-up-button-wrapper">
-                            <button name="sign-up-button" onClick={this.signUp} >Sign Up</button>
-                        </div>
-                        <div className="login-button-wrapper">
-                            <button name="login-button" onClick={() => window.location = "/login"}>Login</button>
-                        </div>
-                    </div>
+                    <button className="login-button" onClick={this.signUp} >Sign Up</button>
+                    <a name="login-button" onClick={() => window.location = "/login"}>Login</a>
+
                 </div>
             </div>
         );
