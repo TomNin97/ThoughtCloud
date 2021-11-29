@@ -14,7 +14,8 @@ export class LoginPage extends React.Component {
         this.state = {
             email: props.email ?? "",
             password: props.password ?? "",
-            isLoggedIn: props.isLoggedIn ?? false
+            isLoggedIn: props.isLoggedIn ?? false,
+            authenticated: props.authenticated ?? false
         }
     }
 
