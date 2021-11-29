@@ -22,7 +22,6 @@ module.exports = app => {
     /* remove a course by its primary key */
     app.delete("/courses/:departmentID-:courseID-:sectionID/delete", courses.removeCourse);
 
-
     app.get("/courses")
     /* get a course by its primary key */
     app.get("/courses/:departmentID-:courseID-:sectionID/", courses.getCourseInfo);
@@ -38,6 +37,9 @@ module.exports = app => {
     */
     app.get("/courses/:departmentID-:courseID-:sectionID/:content", courses.getAllInfo);
 
+    /* tag search */
+    app.get("/courses/:departmentID-:courseID-:sectionID/notes/ts", courses.tagSearch);
+    
     /* delete all content from a course's subtable */
     app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/all", courses.deleteAllSubtableContent);
 

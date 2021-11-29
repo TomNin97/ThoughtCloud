@@ -51,7 +51,7 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[2] +
-    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, PRIMARY KEY(posterID, postID), noteTitle VARCHAR(30), noteTags VARCHAR(200))";
+    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, noteTitle VARCHAR(30), noteTags VARCHAR(200), PRIMARY KEY(posterID, postID))";
   var q5 = "INSERT INTO masterlist SET ?";
   /* object to store formed queries */
   var queries = {
@@ -70,6 +70,26 @@ function deleteQueryGen(reqData){
   var tableName = reqData.body.tableName;
   if(tableName === "notes" || "Notes")
     return "DELETE FROM " + `${reqData.params.departmentID}` + `${reqData.params.courseID}` + `${reqData.params.sectionID}`+ "notes WHERE contentLink = '" + `${reqData.body.fileName}` + "'";
+}
+
+/* function to form deletion queries */
+function tagQueryGen(reqData){
+  /* specify and or or tags in result */
+  var searchtype = reqData.body.searchType;
+  if((searchtype.toUpperCase() != "AND") && (searchtype.toUpperCase() != "OR"))
+    return "-1";
+  var i = 0;
+  if(Object.keys(reqData.body.tags).length == 0)
+    return "-2";
+  var query = "SELECT * FROM " + `${reqData.params.departmentID}` + `${reqData.params.courseID}` + `${reqData.params.sectionID}` + "notes WHERE ";
+  for (const prop in reqData.body.tags) {
+      query += "(noteTags LIKE '%" + reqData.body.tags[prop] + "%')";
+  if (i != Object.keys(reqData.body.tags).length - 1) {
+    query += " " + searchtype + " ";
+  }
+  i++;
+}
+return query;
 }
 
 /* Create a new course */
@@ -316,6 +336,28 @@ Course.deleteRecord = (reqData, result) => {
   });
 };
 
+Course.tagSearch = (reqData, result) => {
+  var sqlQuery = tagQueryGen(reqData);
+  if(sqlQuery == "-2"){
+      console.log("no tags supplied");
+      result("no tags supplied");
+      return;
+  }
+  if(sqlQuery == "-1"){
+    console.log("no search operator supplied");
+    result("no tags supplied");
+    return;
+}
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("got "+ `${res.length}` + " notes: ", res);
+    result(null, res);
+  });
+};
 
 //TO DO
 /*

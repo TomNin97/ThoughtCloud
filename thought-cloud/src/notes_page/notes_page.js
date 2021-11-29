@@ -34,11 +34,11 @@ function AddNoteModal(props) {
         var fileContent;
         fileReader.onloadend = () => {
             fileContent = fileReader.result;
-            imageRequests.uploadFile(file.name, fileContent,Date.now(0), noteTitle, noteTags ).then(e => {
+            imageRequests.uploadFile(file.name, fileContent, Date.now(0), noteTitle, noteTags ).then(e => {
                 imageRequests.getCourseNotes().then(data => {
                     if (data != null) {
-                        console.table(data);
-                        props.setState({ "notes": data });
+                    //    console.table(data);
+                    //    props.setState({ "notes": data });
                     }
                 })
             });

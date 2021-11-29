@@ -49,7 +49,8 @@ const VALID_NOTES_KEYS = [
   "hideStart",
   "hideEnd",
   "noteTags",
-  "noteTitle"
+  "noteTitle",
+  "noteTags",
 ];
 
 function requestCheck(req) {
@@ -262,22 +263,21 @@ exports.postContent = (req, res) => {
 /* find all the clases that a student is a member of */
 exports.getCourseMembership = (req, res) => {
   var idToFInd = req.params.userID;
-  
-  Course.getCourseMembership(idToFInd,
+
+  Course.getCourseMembership(
+    idToFInd,
 
     (err, data) => {
       if (err) {
         res.status(500).send({
           message: err.message || "Error when finding user's courses",
         });
-      }
-      else {
+      } else {
         res.send(data);
-
       }
-    })
+    }
+  );
 };
-
 
 exports.deleteRecord = (req, res) => {
   Course.deleteRecord(req, (err, data) => {
@@ -287,4 +287,33 @@ exports.deleteRecord = (req, res) => {
       });
     else res.send({ message: "record successfully removed" });
   });
+};
+
+/* 
+  req needs to be of the form:
+  {
+    departmentID :
+    courseID :
+    sectionID :
+    searchType : (AND / OR)
+    tags{
+      tag1 :
+      tag2 :
+      .
+      .
+      .
+      tagN : 
+    }
+  }
+*/
+exports.tagSearch = (req, res) => {
+  Course.tagSearch(req, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Error searching tags",
+      });
+    else {
+      res.send(data);
+    }
+    });
 };
