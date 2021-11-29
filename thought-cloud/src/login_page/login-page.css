@@ -1,0 +1,52 @@
+.entry-body {
+    width: 100vw;
+    height: 100vh;
+    background-color: #d4e09b;
+    background-image: url("https://pixabay.com/get/g6517763dfe24edf55d3b337c7e1535ad93d1d035033e33371adbc9b9e84f0d97cef31c7b73b198582c9398310694c2bc58962da900433cfa62c4e55ef8cb13086abf0c722da161ed4f6dcaed85de727f_1920.jpg");
+    margin-top: 0;
+    padding-top: 0;
+    position: absolute;
+    top: 0;
+}
+
+.entry-page-header {
+    font-size: 50px;
+    margin: 0;
+    padding: 0;
+    top: 0;
+   color: white;
+}
+
+.login-form {
+    max-height: 40vh;
+    width: 15vw;
+    margin: auto auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-content: center;
+    background-color: white;
+    padding: 20px;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.login-form h2 {
+    text-align: left;
+}
+.login-form * {
+   margin: 4px 0;
+}
+
+.login-button {
+    border: none;
+    background-color: #d4e09b;
+    color: white;
+    font-size: 20px;
+    box-shadow: 1px 1px 1px 1px grey;
+    border-radius: 5px;
+}
+
+.login-form a {
+    text-align: left;
+}

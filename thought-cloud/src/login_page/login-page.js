@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { UserRequests } from '../backend-request/user-request';
 import { Route, Switch } from 'react-router-dom';
 import { DashBoard } from '../account_page/account_page';
+import "../login_page/login-page.css"
 
 
 export class LoginPage extends React.Component {
@@ -47,22 +48,21 @@ export class LoginPage extends React.Component {
     render() {
         //email & password input
         return (
-            <div>
-                <div className="login-page-header">
-                    <h1>ThoughtCloud</h1>
+            <div className="entry-body">
+                <div className="entry-page-header">
+                    <h1>#thoughtCloud</h1>
                 </div>
                 <div className="login-form">
-                    <label>UAkron Email</label>
-                    <input type="email" required value={this.state.email} onChange={(content) => this.handleChange("email", content)} /><br />
-                    <label>password</label>
-                    <input type="password" required value={this.state.password} onChange={(content) => this.handleChange("password", content)} /><br />
-                    {/* This will be activated if the sign up button is clicked */}
-                    <div className="login-button-wrapper">
-                        <button name="login-button" onClick={this.login}>Login</button>
-                        <button name="sign-up-button" onClick={()=>window.location ="/signup"}>Sign Up</button>
-                    </div>
+                    <h2>LOGIN</h2>
+                    <input type="email" placeholder="email" required value={this.state.email} onChange={(content) => this.handleChange("email", content)} />
 
+                    <input type="password" placeholder="password" required value={this.state.password} onChange={(content) => this.handleChange("password", content)} />
+                    {/* This will be activated if the sign up button is clicked */}
+
+                    <button className="login-button" onClick={this.login}>Login</button>
+                    <a name="sign-up-button" onClick={() => window.location = "/signup"}>Sign Up</a>
                 </div>
+
             </div>
         );
     }
