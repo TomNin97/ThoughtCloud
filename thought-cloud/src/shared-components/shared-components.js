@@ -22,7 +22,7 @@ const Header = (props) => {
             <h1 className = "header-title">{props.title}</h1>
             <div className="page-selection-section" style={{ display: "flex" }}>
                 <MainPageButtons title="Home" propRoute='/dashboard' />
-                <MainPageButtons title="Account" propRoute='/account' />
+                {/*<MainPageButtons title="Account" propRoute='/account' />*/}
 
                 {sessionItems.getItem("ID") == null ? <MainPageButtons title="Log In" propRoute="/login" /> : null}
                 {sessionItems.getItem("ID") == null ? <MainPageButtons title="Sign Up" propRoute="/signup" /> : null}
