@@ -51,7 +51,7 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[2] +
-    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, noteTitle VARCHAR(30), noteTags VARCHAR(200), PRIMARY KEY(posterID, postID))";
+    " (posterID VARCHAR(8) NOT NULL, postID INT NOT NULL UNIQUE AUTO_INCREMENT, uploadDT TIMESTAMP NOT NULL, dateTaken DATE, format VARCHAR(10) NOT NULL, contentLink VARCHAR(300) NOT NULL UNIQUE, hidden BOOLEAN NOT NULL DEFAULT FALSE, persistent BOOLEAN NOT NULL DEFAULT FALSE, hideStart DATETIME, hideEnd DATETIME, noteTitle VARCHAR(30), noteTags VARCHAR(200), PRIMARY KEY(posterID, postID))";
   var q5 = "INSERT INTO masterlist SET ?";
   /* object to store formed queries */
   var queries = {
@@ -66,30 +66,93 @@ function formQuery(courseInfo) {
 }
 
 /* function to form deletion queries */
-function deleteQueryGen(reqData){
+function deleteQueryGen(reqData) {
   var tableName = reqData.body.tableName;
-  if(tableName === "notes" || "Notes")
-    return "DELETE FROM " + `${reqData.params.departmentID}` + `${reqData.params.courseID}` + `${reqData.params.sectionID}`+ "notes WHERE contentLink = '" + `${reqData.body.fileName}` + "'";
+  if (tableName === "notes" || "Notes")
+    return (
+      "DELETE FROM " +
+      `${reqData.params.departmentID}` +
+      `${reqData.params.courseID}` +
+      `${reqData.params.sectionID}` +
+      "notes WHERE postID = '" +
+      `${reqData.body.postID}` +
+      "'"
+    );
+  if (tableName === "classlist" || "Classlist")
+    return (
+      "DELETE FROM " +
+      `${reqData.params.departmentID}` +
+      `${reqData.params.courseID}` +
+      `${reqData.params.sectionID}` +
+      "notes WHERE ID = '" +
+      `${reqData.body.ID}` +
+      "'"
+    );
+  if (tableName === "calendar" || "Calendar")
+    return (
+      "DELETE FROM " +
+      `${reqData.params.departmentID}` +
+      `${reqData.params.courseID}` +
+      `${reqData.params.sectionID}` +
+      "notes WHERE eventID = '" +
+      `${reqData.body.eventID}` +
+      "'"
+    );
 }
 
-/* function to form deletion queries */
-function tagQueryGen(reqData){
+/* function to form tag search queries */
+function tagQueryGen(reqData) {
   /* specify and or or tags in result */
   var searchtype = reqData.body.searchType;
-  if((searchtype.toUpperCase() != "AND") && (searchtype.toUpperCase() != "OR"))
+  if (searchtype.toUpperCase() != "AND" && searchtype.toUpperCase() != "OR")
     return "-1";
   var i = 0;
-  if(Object.keys(reqData.body.tags).length == 0)
-    return "-2";
-  var query = "SELECT * FROM " + `${reqData.params.departmentID}` + `${reqData.params.courseID}` + `${reqData.params.sectionID}` + "notes WHERE ";
+  if (Object.keys(reqData.body.tags).length == 0) return "-2";
+  var query =
+    "SELECT * FROM " +
+    `${reqData.params.departmentID}` +
+    `${reqData.params.courseID}` +
+    `${reqData.params.sectionID}` +
+    "notes WHERE ";
   for (const prop in reqData.body.tags) {
-      query += "(noteTags LIKE '%" + reqData.body.tags[prop] + "%')";
-  if (i != Object.keys(reqData.body.tags).length - 1) {
-    query += " " + searchtype + " ";
+    query += "(noteTags LIKE '%" + reqData.body.tags[prop] + "%')";
+    if (i != Object.keys(reqData.body.tags).length - 1) {
+      query += " " + searchtype + " ";
+    }
+    i++;
   }
-  i++;
+  return query;
 }
-return query;
+
+/* function to form update queries */
+function updateQueryGen(reqData) {
+  if (Object.keys(reqData.body.updates).length == 0) return "-2";
+  if (Object.keys(reqData.body.keys).length == 0) return "-1";
+  var query =
+    "UPDATE " +
+    `${reqData.params.departmentID}` +
+    `${reqData.params.courseID}` +
+    `${reqData.params.sectionID}` +
+    `${reqData.params.content}` +
+    " SET ";
+  var i = 0;
+  for (const prop in reqData.body.updates) {
+    query += `${prop}` + " = '" + reqData.body.updates[prop] + "'";
+    if (i != Object.keys(reqData.body.updates).length - 1) {
+      query += ", ";
+    }
+    i++;
+  }
+  var j = 0;
+  query += " WHERE";
+  for (const prop in reqData.body.keys) {
+    query += " " + `${prop}` + " = '" + reqData.body.keys[prop] + "'";
+    if (j != Object.keys(reqData.body.keys).length - 1) {
+      query += " AND";
+    }
+    j++;
+  }
+  return query;
 }
 
 /* Create a new course */
@@ -113,8 +176,12 @@ Course.create = (newCourse, result) => {
         });
       }
 
-
-      const data = { "ID": newCourse.professorID, "departmentId": newCourse.departmentID, "courseID": newCourse.courseID, "sectionID": newCourse.courseSection };
+      const data = {
+        ID: newCourse.professorID,
+        departmentId: newCourse.departmentID,
+        courseID: newCourse.courseID,
+        sectionID: newCourse.courseSection,
+      };
 
       console.log("Data being added to masterlist : ", data);
       sql.query(sqlQueries.q_insertMasterList, data, (err, res3) => {
@@ -272,22 +339,31 @@ Course.postContent = (masterInfo, dbTable, assignment, result) => {
           });
         }
 
-        sql.query("INSERT INTO masterlist SET ID = ?, departmentID = ?, courseID = ?, sectionID = ?", [masterInfo.ID, masterInfo.departmentID, masterInfo.courseID, masterInfo.sectionID], (err, res2) => {
-          if (err) {
-            return sql.rollback(function () {
-              throw err;
-            });
-          }
-          sql.commit(function (err) {
-            result(null, "success");
+        sql.query(
+          "INSERT INTO masterlist SET ID = ?, departmentID = ?, courseID = ?, sectionID = ?",
+          [
+            masterInfo.ID,
+            masterInfo.departmentID,
+            masterInfo.courseID,
+            masterInfo.sectionID,
+          ],
+          (err, res2) => {
             if (err) {
               return sql.rollback(function () {
                 throw err;
               });
             }
-            console.log("success!");
-          });
-        });
+            sql.commit(function (err) {
+              result(null, "success");
+              if (err) {
+                return sql.rollback(function () {
+                  throw err;
+                });
+              }
+              console.log("success!");
+            });
+          }
+        );
       });
     });
   } else {
@@ -309,19 +385,21 @@ Course.postContent = (masterInfo, dbTable, assignment, result) => {
 Course.getCourseMembership = (userID, result) => {
   console.log(userID);
 
-  sql.query("SELECT * FROM  courses natural join (select courseID, departmentID, sectionID  from masterlist where ID = ? ) AS rand", userID,(err, res) => {
+  sql.query(
+    "SELECT * FROM  courses natural join (select courseID, departmentID, sectionID  from masterlist where ID = ? ) AS rand",
+    userID,
+    (err, res) => {
+      if (err) {
+        console.log("error: ", err);
+        result(err, null);
+        return;
+      }
 
-    if (err) {
-      console.log("error: ", err);
-      result(err, null);
-      return;
+      console.log("found " + `${res.affectedRows}` + " matches");
+      result(null, res);
     }
-
-    console.log("found " + `${res.affectedRows}` + " matches");
-    result(null, res);
-  });
+  );
 };
-
 
 Course.deleteRecord = (reqData, result) => {
   var sqlQuery = deleteQueryGen(reqData);
@@ -338,23 +416,46 @@ Course.deleteRecord = (reqData, result) => {
 
 Course.tagSearch = (reqData, result) => {
   var sqlQuery = tagQueryGen(reqData);
-  if(sqlQuery == "-2"){
-      console.log("no tags supplied");
-      result("no tags supplied");
-      return;
+  if (sqlQuery == "-2") {
+    console.log("no tags supplied");
+    result("no tags supplied");
+    return;
   }
-  if(sqlQuery == "-1"){
+  if (sqlQuery == "-1") {
     console.log("no search operator supplied");
     result("no tags supplied");
     return;
-}
+  }
   sql.query(sqlQuery, (err, res) => {
     if (err) {
       console.log("error: ", err);
       result(err, null);
       return;
     }
-    console.log("got "+ `${res.length}` + " notes: ", res);
+    console.log("got " + `${res.length}` + " notes: ", res);
+    result(null, res);
+  });
+};
+
+Course.updateRecord = (req, result) => {
+  var sqlQuery = updateQueryGen(req);
+  if (sqlQuery == "-2") {
+    console.log("no updated values suplied");
+    result("no updated values suplied");
+    return;
+  }
+  if (sqlQuery == "-1") {
+    console.log("no keys supplied");
+    result("no keys supplied");
+    return;
+  }
+  sql.query(sqlQuery, (err, res) => {
+    if (err) {
+      console.log("error: ", err);
+      result(err, null);
+      return;
+    }
+    console.log("Updated " + `${res.length}` + " records: ", res);
     result(null, res);
   });
 };
@@ -366,9 +467,8 @@ Course.tagSearch = (reqData, result) => {
   Delete Calendar Event
   Delete from classlist
   Delete from Notes
-
-  Edit Calendar Title/Description/Date/Time
-  Edit Notes 
 */
+
+
 
 module.exports = Course;
