@@ -1,3 +1,12 @@
+@keyframes onLoginLoad {
+    0% {
+       transform: translateY(100vw);
+    }
+
+    100% {
+       transform: translateY(0);
+    }
+}
 .entry-body {
     width: 100vw;
     height: 100vh;
@@ -15,7 +24,12 @@
     padding: 0;
     top: 0;
    color: white;
+   animation-name: onLoginLoad;
+   animation-duration: 1s;
 }
+
+
+
 
 .login-form {
     max-height: 40vh;
@@ -29,7 +43,13 @@
     padding: 20px;
     border: 2px solid black;
     border-radius: 5px;
+    animation-name: onLoginLoad;
+    animation-duration: 2s;
 }
+
+
+
+
 
 .login-form h2 {
     text-align: left;
