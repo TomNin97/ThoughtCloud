@@ -4,6 +4,7 @@ import { NotesPage } from '../notes_page/notes_page';
 import { Header, CalenderComponent, MainPageButtons } from '../shared-components/shared-components';
 import { CalenderPage } from './calender-page/calender-page';
 import "../main_class_page/main-class-page.css";
+import { storage } from 'firebase-admin';
 
 //enums for identifying pages
 
@@ -52,6 +53,14 @@ export class MainClassPage extends React.Component {
     }
 
     render() {
+        /* prevent access to this page if not logged in */
+        if(localStorage.getItem('authenticated') != 'true')
+            return (
+                <div>
+                 <body>You must be logged in to view this page</body>
+                </div>
+            ) 
+        else
         return (
             <div className="page-wrapper">
                 <Header title={this.state.currentPage} />

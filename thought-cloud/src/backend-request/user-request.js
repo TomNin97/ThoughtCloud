@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { auth } from 'firebase-admin';
 import { SessionItems } from './session-items';
 
 
@@ -16,20 +17,25 @@ const User = {
     firstName: null,
     lastName: null,
     type: null,
+    authenticated: false,
+
     setUser: function (id, email, firstName, lastName, type) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.type = type;
+        this.authenticated = this.authenticated;
     },
+
     getUserMap: function () {
         return {
             "ID": this.id,
             "email": this.email,
             "firstName": this.firstName,
             "lastName": this.lastName,
-            "type": this.type
+            "type": this.type,
+            "authenticated": this.authenticated
         }
     }
 };
@@ -123,6 +129,8 @@ export class UserRequests {
                     console.log("item:" + item + data[0][`${item}`]);
                     this.sessionItems.setItem(`${item}`, data[0][`${item}`]);
                 }
+                /* set authenticated status */
+                this.sessionItems.setItem('authenticated', true);
                 this.user.setUser(data['id'], data['email'], data['firstName'], data['lastName'], data['type']);
                 return true;
             }

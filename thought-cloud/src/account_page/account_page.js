@@ -105,7 +105,14 @@ export class DashBoard extends React.Component {
 
 
     render() {
-
+        /* prevent access to this page if not logged in */
+        if(localStorage.getItem('authenticated') != 'true')
+            return (
+                <div>
+                 <body>You must be logged in to view this page</body>
+                </div>
+            ) 
+        else
         if (this.state.redirect) {
             return (
                 <Redirect to="/course-center" />

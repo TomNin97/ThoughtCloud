@@ -143,7 +143,6 @@ export class NotesPage extends React.Component {
 
 
     render() {
-
         //another option for creating notes. We can use css to wrap  thus making it more dynamic when the screen sizes change
         return (
             <div className="notes-page-wrapper" style={{ display: "flex", flexWrap: "true", width: "100vw" }}>
