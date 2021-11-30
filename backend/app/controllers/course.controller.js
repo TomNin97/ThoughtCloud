@@ -317,3 +317,13 @@ exports.tagSearch = (req, res) => {
     }
     });
 };
+
+exports.updateRecord = (req, res) => {
+  Course.updateRecord(req, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Error when removing record",
+      });
+    else res.send(req.body.updates);
+  });
+};  

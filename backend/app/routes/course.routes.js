@@ -57,8 +57,10 @@ module.exports = app => {
             "posterID" : "ID_OF_ORIGINAL_POSTER"
         }
     */
+
+   /* delete content in subtables */
     app.delete("/courses/:departmentID-:courseID-:sectionID/:content/", courses.deleteRecord);
 
-    /* delete any record */
-    //app.delete("/courses/:departmentID-:courseID-:sectionID/:content/delete/", courses.deleteRecordAdmin);
+    /* update an entry in a subtable */
+    app.put("/courses/:departmentID-:courseID-:sectionID/:content/", courses.updateRecord);
 };

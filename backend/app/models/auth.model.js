@@ -16,7 +16,7 @@ the above features. To create an API call that will perform a query on the users
 const authRoutes = require("../routes/auth.routes.js");
 const sql = require("./db.js");
 
-/* Course constructor */
+/* Auth constructor */
 const Auth = function (auth) {
     this.ID = auth.ID;
     this.firstName = auth.firstName;
