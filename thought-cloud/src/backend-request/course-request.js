@@ -145,8 +145,8 @@ export default class CourseRequests {
        return await  axios({
             method :"delete",
             headers : jsonHeader,
-            data : JSON.stringify({"ID" : id, "tableName" : "classlist"}),
-            url : baseUrl +`/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/classlist/`
+            data : JSON.stringify({"userID" : id}),
+            url : baseUrl +`/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/removeuser`
         }).then(e=> {
             if(e.status == 200) return true;
             return false;

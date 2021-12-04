@@ -21,7 +21,7 @@ function MemberItem(props) {
          courseRequests.deleteClassMember(props.member.id, props.course).then(e=> {
            console.log("Resukt", e);
             if(e) {
-              props.updateList();
+              //props.updateList();
             }
          });
        }
@@ -117,8 +117,10 @@ export class ClassListPage extends React.Component {
   }
 
   getClassList( ) {
+   console.log("test" + this.state.course);
     courseRequests.getClasslist(this.state.course).then((value) => {
       this.setState({ classList: value });
+
     });
   }
 
@@ -145,7 +147,7 @@ export class ClassListPage extends React.Component {
                   console.log("member", e);
                    return <MemberItem
                       member={{ name: e.firstName + " " + e.lastName, id : e.id }} course = {this.state.course}
-                      updateList = {this.getClassList}
+                     // updateList = {this.getClassList}
                      
                     />
                 })

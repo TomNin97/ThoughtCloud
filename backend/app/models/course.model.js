@@ -471,6 +471,40 @@ Course.updateRecord = (req, result) => {
   Delete from Notes
 */
 
-
+Course.removeUser = (req, result) => {
+  var tableID = req.params.departmentID+req.params.courseID+req.params.sectionID+"classList";
+  var classlistQuery = "DELETE FROM " + tableID + " WHERE ID = ?";
+  var masterlistQuery = "DELETE FROM masterlist WHERE ID = ?"
+  sql.beginTransaction(function (err) {
+    if (err) {
+      throw err;
+    }
+    /* remove from classlist */
+    sql.query(classlistQuery, req.body.userID, (err, res1) => {
+      if (err) {
+        return sql.rollback(function () {
+          throw err;
+        });
+      }
+      /* remove from masterlist */
+      sql.query(masterlistQuery, req.body.userID, (err, res2) => {
+        if (err) {
+          return sql.rollback(function () {
+            throw err;
+          });
+        }
+      });
+      sql.commit(function (err) {
+        result(null, "success");
+        if (err) {
+          return sql.rollback(function () {
+            throw err;
+          });
+        }
+        console.log("success!");
+      });
+    });
+  });
+};
 
 module.exports = Course;

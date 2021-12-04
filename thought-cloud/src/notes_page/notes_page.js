@@ -175,7 +175,7 @@ export class NotesPage extends React.Component {
                 const tagsMap = {};
                 for(var note of data) {
                     console.table("note is",note.noteTags);
-                    const tags = note.noteTags.replaceAll(" ", "").split(',');
+                    const tags = (note.noteTags ?? " ").replaceAll(" ", "").split(',');
                     for( const tag of tags) {
                         if(tagsMap[tag] == null) {
                             tagsMap[tag] = 1;

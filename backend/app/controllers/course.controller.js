@@ -327,3 +327,13 @@ exports.updateRecord = (req, res) => {
     else res.send(req.body.updates);
   });
 };  
+
+exports.removeUser = (req, res) => {
+  Course.removeUser(req, (err, data) => {
+    if (err)
+      res.status(500).send({
+        message: err.message || "Error when removing record",
+      });
+    else res.send({ message: "record successfully removed" });
+  });
+};

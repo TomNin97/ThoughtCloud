@@ -58,8 +58,11 @@ module.exports = app => {
         }
     */
 
+    /* remove a user */
+    app.delete("/courses/:departmentID-:courseID-:sectionID/removeuser", courses.removeUser);
+
    /* delete content in subtables */
-    app.delete("/courses/:departmentID-:courseID-:sectionID/:content/", courses.deleteRecord);
+    app.delete("/courses/:departmentID-:courseID-:sectionID/:content", courses.deleteRecord);
 
     /* update an entry in a subtable */
     app.put("/courses/:departmentID-:courseID-:sectionID/:content/", courses.updateRecord);
