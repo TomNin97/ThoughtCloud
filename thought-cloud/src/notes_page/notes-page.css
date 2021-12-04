@@ -1,4 +1,9 @@
 
+.notes-page-wrapper span {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
 #add-note-button {
     width: 90vw;
     border: none;

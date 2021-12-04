@@ -160,8 +160,8 @@ export class NotesPage extends React.Component {
         this.state = {
             notes: [],
             course: props.course,
-            searchValue : "",
-            tags : {},
+            selectedValues: new Set(),
+            tags : {"sdss" : 1, "fsfs": 2},
         }
         this.imageRequests = new ImageRequests(props.course);
         this.getNotes();
@@ -175,7 +175,7 @@ export class NotesPage extends React.Component {
                 const tagsMap = {};
                 for(var note of data) {
                     console.table("note is",note.noteTags);
-                    const tags = note.noteTags.split(',');
+                    const tags = note.noteTags.replaceAll(" ", "").split(',');
                     for( const tag of tags) {
                         if(tagsMap[tag] == null) {
                             tagsMap[tag] = 1;
@@ -194,8 +194,10 @@ export class NotesPage extends React.Component {
     }
 
     FilterItem(props) {
+
+        
             return (
-                <div style = {{"height" : "2vh", "width" : "1vw"}}>
+                <div onClick = {()=>props.onTap()} style = {{height : "6vh", flexGrow : "2", backgroundColor : `${props.isSelected ?  "#d4e09ba2" :"grey" }`, border : `1px solid ${props.isSelected ? "black": "grey"}`, margin : "3px", justifyContent : "center"}}>
                     {props.title}
                 </div>
             )
@@ -204,15 +206,25 @@ export class NotesPage extends React.Component {
     filterSection =() =>{
        
         const tags = this.state.tags
-        console.log("tsgs is ",tags);
+        console.log("tags is ",tags);
         return (
-            <span>
+            <span style = {{display : "flex", flexDirection : "row", width : "100vw", margin : "10px 10px"}}>
             
              {Object.keys(tags).map((tagPos)=>{
-                 return <span>
-                     
-                    <this.FilterItem title =  {`${tags[tagPos]} (${tagPos})`} />
-                     </span>
+                 return  <this.FilterItem  onTap = {()=> {
+                    if(this.state.selectedValues.has(tagPos)) {
+                        const updatedValues = this.state.selectedValues;
+                        updatedValues.delete(tagPos)
+                        console.log("selected val", updatedValues, " ", this.state.selectedValues);
+                        this.setState({"selectedValues" : updatedValues});
+                    }
+                    else {
+                        const updatedValues = this.state.selectedValues;
+                        updatedValues.add(tagPos);
+                        console.log("selected val", updatedValues, " ", this.state.selectedValues);
+                        this.setState({"selectedValues" : updatedValues});
+                    }
+                 }}title =  {`${tagPos}(${tags[tagPos]})`} isSelected = {this.state.selectedValues.has(tagPos)}/>
              })} 
             </span>
         )
@@ -224,7 +236,7 @@ export class NotesPage extends React.Component {
         return (
             
             <div className="notes-page-wrapper" style={{ display: "flex", flexWrap: "true", width: "100vw" }}>
-                {this.filterSection()}
+               
                 <AddNoteModal imageRequests={this.imageRequests} setState={
                     
                     ()=> {
@@ -233,6 +245,7 @@ export class NotesPage extends React.Component {
                    } />
 
                <span>
+               {this.filterSection()}
                <button id="add-note-button" onClick={
                     () => {
                         const modal = document.getElementById("add-note-modal");
@@ -240,7 +253,14 @@ export class NotesPage extends React.Component {
                     }
                 }>+</button>
                 <div id="notes-thumbnails">
-                    {this.state.notes.length != 0 ? this.state.notes.map(e => e.contentLink != "" ? <NoteItem imageRequests={this.imageRequests} course={this.state.course} reloadPage = {()=> {
+                    {this.state.notes.length != 0 ? this.state.notes.filter(e=>{
+                        if(this.state.selectedValues.size == 0) return true;
+                        for( const value of this.state.selectedValues) {
+                            if(e.noteTags.replaceAll(" ", "").search(value) != -1) return true;
+                        }
+
+                        return false;
+                    }).map(e => e.contentLink != "" ? <NoteItem imageRequests={this.imageRequests} course={this.state.course} reloadPage = {()=> {
                         this.getNotes();
                     }} note={e} /> : null) : "No Notes Yet.."}
                 </div>
