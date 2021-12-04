@@ -126,6 +126,7 @@ function tagQueryGen(reqData) {
 
 /* function to form update queries */
 function updateQueryGen(reqData) {
+  console.table(reqData.body);
   if (Object.keys(reqData.body.updates).length == 0) return "-2";
   if (Object.keys(reqData.body.keys).length == 0) return "-1";
   var query =

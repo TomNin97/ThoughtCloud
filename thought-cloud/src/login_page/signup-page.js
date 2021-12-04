@@ -13,7 +13,7 @@ export class SignUpPage extends React.Component {
             userId: props.id ?? "",
             firstName: props.firstName ?? "" ,
             lastName: props.lastName ?? "",
-            accountType: props.accountType ?? "",
+            accountType: "teacher",
             email: props.email ?? "",
             password: props.password ?? "",
             isLoggedIn: props.isLoggedIn ?? false
@@ -67,12 +67,13 @@ export class SignUpPage extends React.Component {
             <div className="entry-body">
                 <div className="entry-page-header">
                     <h1>#thoughtCloud</h1>
+                    {/* <h4>Are you are Teacher?</h4> */}
                 </div>
                 <div className="login-form">
                 <h2>SIGN UP</h2>
                     <input type="text" placeholder="First name" required value={this.state.firstName} onChange={(content) => this.handleChange("firstName", content)} />
                     <input type="text" placeholder="Last name" required value={this.state.lastName} onChange={(content) => this.handleChange("lastName", content)} />
-                    <input type="text" placeholder="Account Type" required value={this.state.accountType} onChange={(content) => this.handleChange("accountType", content)} />
+                    <input type="text" placeholder="Account Type" required value={this.state.accountType} onChange={(content) => this.handleChange("accountType", content)} hidden />
                     <input type="email" placeholder="email" required value={this.state.email} onChange={(content) => this.handleChange("email", content)} />
                     <input type="password" placeholder="password" required value={this.state.password} onChange={(content) => this.handleChange("password", content)} /><br />
                     {/* This will be activated if the sign up button is clicked */}

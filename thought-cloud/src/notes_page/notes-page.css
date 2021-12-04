@@ -1,4 +1,18 @@
 
+#add-note-button {
+    width: 90vw;
+    border: none;
+    height: 30px;
+    margin-left: 5vw;
+    margin-right: 5vw;
+    border-radius: 2px;
+}
+
+#add-note-button:hover {
+    background-color: black;
+    color: white;
+}
+
 .note-item-wrapper {
     position: relative;
     height: 20vh;
@@ -31,9 +45,11 @@
 
 #notes-thumbnails {
     display: grid;
-   width: 100vw;
+   width: 90vw;
     grid-template-columns: repeat(auto-fit, minmax(150px , 1fr));
     grid-gap: 10px;
+    margin: auto auto;
+    padding: 10px 10px;
 }
 
 .image-view-modal {
@@ -128,6 +144,32 @@
     border-radius: 5px;
 }
 
+.image-modal-header {
 
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+    padding: 2px 2px;
+}
 
+.image-modal-header .left-button-wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 2;
+    position: relative;
+}
+
+.image-modal-header h1 {
+    margin: auto auto;
+    padding: auto auto;
+
+}
+
+.image-modal-header  button {
+    border: none;
+    margin: 2px;
+    border-radius: 5px;
+
+}
 

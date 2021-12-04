@@ -2,10 +2,13 @@ import Calender from 'react-calendar';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { SessionItems } from '../backend-request/session-items';
+import {FaBeer} from "react-icons/fa";
+import {AiFillDelete} from "react-icons/ai";
 import "../shared-components/shared-components.css";
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid' // a plugin!
 import interactionPlugin from "@fullcalendar/interaction" // needed for dayClick
+
 const sessionItems = new SessionItems();
 const CustomButton = (props) => {
     return (
@@ -45,9 +48,15 @@ const SearchBar = (props) => {
 }
 
 const ClassButton = (props) => {
+    console.log(props.delete);
     return (
-        <div className="class-button-wrapper ">
-            <button onClick={props.onClick}>{props.title}</button>
+        <div className="class-button-wrapper " >
+           <div onClick={props.onClick} >
+           {props.title} 
+           </div>
+         { props.delete != null ?  <div onClick = {()=> {
+             console.log("dleete clicked");
+             props.delete()}} ><AiFillDelete className = "delete" onClick = {props.delete}/> </div>: null}
         </div>
     );
 }
@@ -66,8 +75,8 @@ const Cal = (props) => {
         console.log("CLickeddd");
         console.table(arg);
         const modal =  document.getElementById("add-event-modal");
-        
-       modal.hidden = false;
+        document.getElementById("grabbed-date").innerHTML = arg.dateStr;
+      if(isTeacher()) modal.hidden = false;
     }
 
 
@@ -135,7 +144,7 @@ function AddEventModal(props) {
                     <input id = "event-title" type="text"  required value = {title} onChange= {(value) => setTitle(value.target.value)} name="eventTitle" />
                     {/* <label>Description</label>
                     <textarea id = "event-description" type="text"  value = {description}  onChange= {e=> setDescription(e.target.value)} line-height= "50px" name="eventDescription" /> */}
-                    <label>Date</label>
+                    <label>Date</label><h1 id= "grabbed-date" hidden ></h1>
                     <input id = "event-date"  value = {dateTime} onChange = {(value)=>{
                         console.log(typeof(value.target.value));
                         setDate(value.target.value)
@@ -151,7 +160,11 @@ function AddEventModal(props) {
 }
 
 
-export { CustomButton, Header, ClassButton, CalenderComponent, MainPageButtons, SearchBar, AddEventModal };
+const isTeacher = ()=>localStorage.getItem("type") == "teacher";
+
+
+
+export { CustomButton, Header, ClassButton, CalenderComponent, MainPageButtons, SearchBar, AddEventModal , isTeacher};
 
 
 

@@ -110,8 +110,10 @@ export default class ImageRequests {
     }
 
 
-    async deleteNote(note = Note()) {
-        const filePath = (await this.getFileUrl(note.contentLink));
+    async deleteNote(note) {
+        console.log("Note is:");
+        console.table(note);
+        const filePath =note.contentLink;
         if (filePath != null) {
             const noteRef = ref(this.storage, filePath);
             await deleteObject(noteRef);
@@ -119,7 +121,7 @@ export default class ImageRequests {
             //delete from database
               await   axios({
                     method : "delete",
-                    data : JSON.stringify({"fileName" : note.contentLink, "tableName" : "notes"}),
+                    data : JSON.stringify({"fileName" : note.contentLink, "tableName" : "notes", "postID": note.postID}),
                     url : baseUrl + `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/notes`,
                     headers : jsonHeader
                 }).then(response => {
@@ -157,7 +159,12 @@ export default class ImageRequests {
             const data = result.data;
             if(data != null) {
                 for( var i =0; i < data.length; i++) {
-                    data[i].contentLink =  await this.getFileUrl(data[i].contentLink)
+                    data[i].contentLink =  await this.getFileUrl(data[i].contentLink).catch(
+                        e=> {
+                            console.log("error getting file", e);
+                            return "";
+                        }
+                    );
                 }
                 
                  return data;
@@ -166,6 +173,72 @@ export default class ImageRequests {
             return [];
         })
     }
+
+
+    async geFilterCourseNotes(){
+
+    }
+
+    async 
+    async togglePersistence( value, postId){
+
+        const data =
+        {
+            "updates":{
+                "persistent" : value ? 1 : 0
+            },
+            "keys":{
+                "postID" : postId
+            }
+        }
+
+       
+
+       return await axios({
+            method :"put",
+            headers: jsonHeader,
+            data :JSON.stringify(data),
+            url : baseUrl +  `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/notes`,
+        }).then(result=> {
+            console.table(this.course);
+            console.log("data is ",  Object.values(result.data)[0]== 1 ? true : false);
+            if( result.data != null) return Object.values(result.data)[0]== 1 ? true : false;
+
+            return false;
+        }).catch(e=> {
+            return false;
+        });
+    }
+
+
+    async toggleHidden( value, postId){
+
+        const data =
+        {
+            "updates":{
+                "hidden" : value ? 1 : 0
+            },
+            "keys":{
+                "postID" : postId
+            }
+        }
+
+       return await axios({
+            method :"put",
+            headers: jsonHeader,
+            data :JSON.stringify(data),
+            url : baseUrl +    `/courses/${this.course.departmentID}-${this.course.courseID}-${this.course.courseSection}/note/`,
+        }).then(result=> {
+            if( result.data != null) return result.data.values[0];
+
+            return false;
+        }).catch(e=> {
+            return false;
+        });
+    }
+
+
+   
 
 
 }

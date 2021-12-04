@@ -3,6 +3,7 @@ import CourseRequests from "../backend-request/course-request";
 import { UserRequests } from "../backend-request/user-request";
 import { useState } from "react";
 import "../classlist_page/classlist_page.css";
+import { isTeacher } from "../shared-components/shared-components";
 
 const userRequests = new UserRequests();
 const courseRequests = new CourseRequests();
@@ -13,7 +14,7 @@ function MemberItem(props) {
       <div className="name-wrapper">
         <h1>{props.member.name}</h1>
       </div>
-      <button>Remove</button>
+     {isTeacher() ? <button>Remove</button> : null}
     </div>
   );
 }
@@ -132,7 +133,7 @@ export class ClassListPage extends React.Component {
   render() {
       return (
         <div className="classlist-page-wrapper">
-          <button onClick={this.addNewMember}>Add New Member</button>
+          {isTeacher() ? <button onClick={this.addNewMember}>Add New Member</button> : null}
           {
             <div
               style={{

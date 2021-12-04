@@ -19,13 +19,13 @@ const User = {
     type: null,
     authenticated: false,
 
-    setUser: function (id, email, firstName, lastName, type) {
+    setUser: function (id, email, firstName, lastName, type, authenticated) {
         this.id = id;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.type = type;
-        this.authenticated = this.authenticated;
+        this.authenticated = authenticated;
     },
 
     getUserMap: function () {
@@ -68,7 +68,7 @@ export class UserRequests {
 
         console.log("Creatingn user 13");
 
-        this.user.setUser(id, email, firstName, lastName, accountType,)
+        this.user.setUser(id, email, firstName, lastName, accountType,true)
         const data = this.user.getUserMap();
         for (const item in data) {
             console.log("item:" + item + data[`${item}`]);
@@ -79,6 +79,8 @@ export class UserRequests {
 
         const postData = this.user.getUserMap();
         postData["password"] = password;
+        delete postData.authenticated;
+        console.table(postData);
 
         return await axios({
             method: "post",

@@ -125,13 +125,15 @@ export default class CourseRequests {
 
     async deleteCourse(course) {
 
-        const userId = this.sessionItems.getItem("id");
+        const userId = this.sessionItems.getItem("ID");
 
         if (userId === course.professorID) {
-            axios({
+            await axios({
                 method: "delete",
                 headers: jsonHeader,
-                url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-:${course.sectionID}/:content/delete/alls`
+                url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-:${course.sectionID}/delete`
+            }).then(e=> {
+                console.log(e.status);
             })
         }
 
@@ -195,21 +197,21 @@ export default class CourseRequests {
     }
 
 
-    async getNotes(course) {
+    // async getNotes(course) {
 
 
-        return await axios({
-            method: "get",
-            headers: jsonHeader,
-            url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/notes/`
-        }).then(result => {
-            const data = result.data;
+    //     return await axios({
+    //         method: "get",
+    //         headers: jsonHeader,
+    //         url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/notes/`
+    //     }).then(result => {
+    //         const data = result.data;
 
-            if (data != null) {
+    //         if (data != null) {
 
-            }
-        })
-    }
+    //         }
+    //     })
+    // }
 
 
     async addEvent(title, description, dateTime, course) {
@@ -253,5 +255,10 @@ export default class CourseRequests {
             console.log("Event is axios ",item );
             return Event(item.eventTitle, item.description, item.eventDate, item.startTime, item.posterID); });
     }
+
     
+    
+    // async toggle(value, postId, course) {
+    //     return  await this.toggleValue(value, "isPersistent", postId, course);
+    // }
 }

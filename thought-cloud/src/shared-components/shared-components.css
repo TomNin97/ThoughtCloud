@@ -107,19 +107,40 @@
 
 
 .class-button-wrapper {
-    height: fit-content;
-    width: fit-content;
     margin: 20px;
-}
-
-.class-button-wrapper button {
     height: 300px;
     width: 300px;
     font-size: 50px;
     border : none;
+    background-color: rgba(241, 234, 234, 0.808);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    border-radius: 5px;
+    position: relative;
+}
+.class-button-wrapper  div:nth-child(2){
+    height: fit-content;
+    width: fit-content;
+}
+.class-button-wrapper .delete {
+    position: absolute;
+    margin: 5px auto;
+    height: 30px;
+    color: red;
+    bottom: 0;
+    left: 0;
+    right: 0;
+   
+}
+.class-button-wrapper .delete:hover {
+    color: coral;
 }
 
-.class-button-wrapper button:hover {
+
+.class-button-wrapper:hover {
     transform: scale(1.1);
     background-color: #d4e09b;
 }
@@ -130,6 +151,7 @@
     width: 100vw;
     height: 100vh;
     background-color: rgba(175, 170, 170, 0.342);
+    z-index: 2;
 }
 
 

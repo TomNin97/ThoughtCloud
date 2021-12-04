@@ -4,6 +4,7 @@ import {
   AddEventModal,
   CalenderComponent,
   CustomButton,
+  isTeacher,
 } from "../../shared-components/shared-components";
 import "../calender-page/calender-page.css";
 
@@ -34,7 +35,7 @@ export class CalenderPage extends React.Component {
           />
           <div className="subtitle-section">
             <h2>Calender</h2>
-            <CustomButton
+            {isTeacher() ? <CustomButton
               title="Add Event"
               onClick={function onDateClick() {
                 console.log("Opening modal");
@@ -42,7 +43,7 @@ export class CalenderPage extends React.Component {
 
                 modal.hidden = false;
               }}
-            />
+            />  : null}
           </div>
           <div className="calender-wrapper">
             <CalenderComponent events={this.state.events} />

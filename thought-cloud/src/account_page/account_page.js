@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { CustomButton, Header, ClassButton } from '../shared-components/shared-components.js';
+import { CustomButton, Header, ClassButton, isTeacher } from '../shared-components/shared-components.js';
 import Popup from 'reactjs-popup';
 
 import 'reactjs-popup/dist/index.css';
@@ -8,6 +8,7 @@ import CourseRequests from '../backend-request/course-request';
 import { AppState } from '../app_state.js';
 import { Redirect } from 'react-router-dom';
 import "../account_page/account_page.css"
+import { SessionItems } from '../backend-request/session-items.js';
 export class DashBoard extends React.Component {
 
 
@@ -41,7 +42,7 @@ export class DashBoard extends React.Component {
     }
 
     onClassButtonClicked(course, classId) {
-        alert(" Simulating going to class " + course.toString() + "with id: " + classId)
+       // alert(" Simulating going to class " + course.toString() + "with id: " + classId)
 
         this.state.appState.course = course;
         this.setState({ redirect: true })
@@ -77,7 +78,7 @@ export class DashBoard extends React.Component {
                             <div className= "buttons-wrapper">
                             <button  id = "submit" type="submit" onClick={
                                 async () => {
-                                    alert("hi");
+                                 
                                     var isSuccess = await this.state.courseRequest.addCourse(this.getInputValueById("departmentId"),
                                         this.getInputValueById("courseId"),
                                         this.getInputValueById("courseSection"),
@@ -88,7 +89,7 @@ export class DashBoard extends React.Component {
 
                                     }
                                     else {
-                                        alert("Failed to Add Course")
+                                        alert("Successfully Added Course")
                                     }
                                     this.getCourses();
                                 }
@@ -100,6 +101,9 @@ export class DashBoard extends React.Component {
             </div>
         );
     }
+
+
+    
 
 
 
@@ -122,7 +126,7 @@ export class DashBoard extends React.Component {
             <div>
                 < Header title={"DashBoard"} />
                 <div className="subsection-title">
-                    {this.showNewCourseForm()}
+                    {  isTeacher()? this.showNewCourseForm() : <div/>}
                     <h2>Your Classes</h2>
                 </div>
                 <div className="divider">
@@ -131,7 +135,11 @@ export class DashBoard extends React.Component {
                 <div className="available-class-list">
 
                     {this.state.classes.length != 0 ?
-                        this.state.classes.map(classItem => <ClassButton title={classItem.courseName} onClick={() => this.onClassButtonClicked(classItem, 0)
+                        this.state.classes.map(classItem => <ClassButton title={classItem.courseName} 
+                            delete = {localStorage.getItem("ID") == classItem.professorID ? ()=>{
+                            console.log("Deleting course")
+                            this.state.courseRequest.deleteCourse(classItem);
+                        } : null} onClick={() => this.onClassButtonClicked(classItem, 0)
                         } />) : "No Classes yet"}
 
                 </div>
