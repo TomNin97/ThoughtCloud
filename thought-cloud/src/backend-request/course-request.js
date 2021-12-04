@@ -139,8 +139,18 @@ export default class CourseRequests {
 
     }
 
-    async deleteUser() {
+    async deleteClassMember(id, course) {
+        if(id == null || course == null) return false;
 
+       return await  axios({
+            method :"delete",
+            headers : jsonHeader,
+            data : JSON.stringify({"ID" : id, "tableName" : "classlist"}),
+            url : baseUrl +`/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/classlist/`
+        }).then(e=> {
+            if(e.status == 200) return true;
+            return false;
+        })
     }
 
     //contentNeeded has to be - subtable name of a course
@@ -169,7 +179,7 @@ export default class CourseRequests {
         return (await this.getCourseContent(course, "classlist").catch(e => {
             console.log("error getting list", e);
             return [];
-        })).map(item => ClassMember(item.id, item.firstName, item.lastName));
+        })).map(item => ClassMember(item.ID, item.firstName, item.lastName));
     }
 
 

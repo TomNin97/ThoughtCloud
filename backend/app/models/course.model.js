@@ -68,6 +68,7 @@ function formQuery(courseInfo) {
 /* function to form deletion queries */
 function deleteQueryGen(reqData) {
   var tableName = reqData.body.tableName;
+  console.log("table name", tableName);
   if (tableName === "notes" || "Notes")
     return (
       "DELETE FROM " +

@@ -14,7 +14,18 @@ function MemberItem(props) {
       <div className="name-wrapper">
         <h1>{props.member.name}</h1>
       </div>
-     {isTeacher() ? <button>Remove</button> : null}
+     {isTeacher() ? <button onClick ={
+       ()=> {
+
+        console.log("id", props.member.id, "course", props.course);
+         courseRequests.deleteClassMember(props.member.id, props.course).then(e=> {
+           console.log("Resukt", e);
+            if(e) {
+              props.updateList();
+            }
+         });
+       }
+     }>Remove</button> : null}
     </div>
   );
 }
@@ -97,29 +108,15 @@ export class ClassListPage extends React.Component {
     this.state = {
       course: props.course,
       classList: [
-        "Mike",
-        "Caleb",
-        "Joe",
-        "Random somebody",
-        "Another rand",
-        "Randy",
-        "Mike",
-        "Caleb",
-        "Joe",
-        "Random somebody",
-        "Another rand",
-        "Randy",
-        "Mike",
-        "Caleb",
-        "Joe",
-        "Random somebody",
-        "Another rand",
-        "Randy",
       ],
     };
 
     console.log("Course is ");
     console.table(this.state.course);
+    this.getClassList();
+  }
+
+  getClassList( ) {
     courseRequests.getClasslist(this.state.course).then((value) => {
       this.setState({ classList: value });
     });
@@ -144,11 +141,14 @@ export class ClassListPage extends React.Component {
               }}
             >
               {this.state.classList.length != 0
-                ? this.state.classList.map((e) => (
-                    <MemberItem
-                      member={{ name: e.firstName + " " + e.lastName }}
+                ? this.state.classList.map((e) => {
+                  console.log("member", e);
+                   return <MemberItem
+                      member={{ name: e.firstName + " " + e.lastName, id : e.id }} course = {this.state.course}
+                      updateList = {this.getClassList}
+                     
                     />
-                  ))
+                })
                 : "No Members Yet"}
             </div>
           }
