@@ -1,0 +1,37 @@
+CREATE TABLE `courses` (
+  `courseID` varchar(3) NOT NULL,
+  `courseSection` varchar(3) NOT NULL,
+  `courseName` varchar(45) NOT NULL,
+  `professorID` varchar(10) DEFAULT NULL,
+  `assistantID` varchar(10) DEFAULT NULL,
+  `departmentID` varchar(4) NOT NULL,
+  PRIMARY KEY (`courseID`,`courseSection`,`departmentID`),
+  KEY `courseInfo` (`departmentID`,`courseID`,`courseSection`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+CREATE TABLE `masterlist` (
+  `ID` varchar(8) NOT NULL,
+  `departmentID` varchar(8) NOT NULL,
+  `courseID` varchar(8) NOT NULL,
+  `sectionID` varchar(8) NOT NULL,
+  PRIMARY KEY (`ID`,`sectionID`,`courseID`,`departmentID`),
+  KEY `courseRecords` (`departmentID`,`courseID`,`sectionID`),
+  CONSTRAINT `courseRecords` FOREIGN KEY (`departmentID`, `courseID`, `sectionID`) REFERENCES `courses` (`departmentID`, `courseID`, `courseSection`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `userID` FOREIGN KEY (`ID`) REFERENCES `users` (`ID`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
+
+CREATE TABLE `users` (
+  `ID` varchar(8) NOT NULL,
+  `firstName` varchar(45) NOT NULL,
+  `lastName` varchar(45) NOT NULL,
+  `email` varchar(45) NOT NULL,
+  `password` varchar(45) NOT NULL,
+  `type` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`ID`,`firstName`,`lastName`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
+  UNIQUE KEY `ID_UNIQUE` (`ID`),
+  CONSTRAINT `userType` CHECK (((`type` = _utf8mb4'staff') or (`type` = _utf8mb4'student')))
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+
