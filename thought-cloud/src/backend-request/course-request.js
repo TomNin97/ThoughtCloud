@@ -126,12 +126,12 @@ export default class CourseRequests {
     async deleteCourse(course) {
 
         const userId = this.sessionItems.getItem("ID");
-
-        if (userId === course.professorID) {
+        console.log("MADE IT HERE");
+        if (userId == course.professorID) {
             await axios({
                 method: "delete",
                 headers: jsonHeader,
-                url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-:${course.sectionID}/delete`
+                url: baseUrl + `/courses/${course.departmentID}-${course.courseID}-${course.courseSection}/delete`
             }).then(e=> {
                 console.log(e.status);
             })

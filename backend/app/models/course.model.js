@@ -37,7 +37,7 @@ function formQuery(courseInfo) {
     courseInfo.courseID +
     courseInfo.courseSection +
     TABLE_MODIFIER[0] +
-    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL, lastName VARCHAR(45) NOT NULL, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE)";
+    " (ID VARCHAR(8) NOT NULL UNIQUE, firstName VARCHAR(45) NOT NULL, lastName VARCHAR(45) NOT NULL, PRIMARY KEY(ID, firstName, lastname), FOREIGN KEY(ID, firstName, lastName) REFERENCES thoughtcloud.users(ID, firstName, lastName) ON UPDATE CASCADE ON DELETE CASCADE)";
   var q3 =
     "CREATE TABLE " +
     courseInfo.departmentID +
